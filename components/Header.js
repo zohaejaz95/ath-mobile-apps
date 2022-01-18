@@ -12,7 +12,7 @@ export default function Header() {
         <View style={headerStyles.navToggle}>
           <Image
             source={require('../asset/hamburger.png')}
-            style={{width: 25, height: 25}}
+            style={{width: 25, height: 20}}
           />
           {/* <Icon name="menu" size={50} color="#7c2529" /> */}
         </View>

@@ -8,7 +8,7 @@ export class App extends Component {
     return (
       <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
         <Header />
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <Landing></Landing>
         </ScrollView>
         <Navigations />

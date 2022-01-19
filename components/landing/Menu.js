@@ -1,5 +1,16 @@
 import React from 'react';
-import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+} from 'react-native';
+
+const {width} = Dimensions.get('window');
+const widthBox = width / 2 - 30;
+//const height = width * 0.5;
 
 const Menu = () => {
   return (
@@ -25,7 +36,7 @@ const Menu = () => {
       </View>
 
       <Text style={styles.giftHeading}>Gifts</Text>
-      <ScrollView horizontal>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={(styles.menuBox, styles.giftBox)}>
           <Image
             style={styles.giftImages}
@@ -81,7 +92,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   images: {
-    width: 160,
+    width: widthBox,
     height: 80,
     marginBottom: 5,
     borderTopRightRadius: 8,

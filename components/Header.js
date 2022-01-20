@@ -1,21 +1,22 @@
 import React from 'react';
-import {Text, Image, StyleSheet, View, ImageBackground} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import styles from './styles/GenericStyles';
+import {
+  Text,
+  Image,
+  StyleSheet,
+  View,
+  ImageBackground,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 
-export default function Header() {
+export default function Header(props) {
+  const {navigation} = props;
   return (
     <ImageBackground
       source={require('../asset/Layer_2.png')}
       resizeMode="cover">
       <View style={headerStyles.header}>
-        <View style={headerStyles.navToggle}>
-          <Image
-            source={require('../asset/hamburger.png')}
-            style={{width: 25, height: 20}}
-          />
-          {/* <Icon name="menu" size={50} color="#7c2529" /> */}
-        </View>
+        {isLoggedIn(props.login, navigation)}
         <View style={headerStyles.heading}>
           <Text style={headerStyles.text}>Experience Emirati Hospitality</Text>
         </View>
@@ -29,6 +30,32 @@ export default function Header() {
     </ImageBackground>
   );
 }
+
+function isLoggedIn(showLoginBtn, navigation) {
+  if (showLoginBtn) {
+    return (
+      <View style={headerStyles.loginBtnBox}>
+        <TouchableOpacity
+          style={headerStyles.loginBtn}
+          onPress={() => navigation.navigate('Login')}>
+          <Text style={headerStyles.continue}>Login</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  } else {
+    return (
+      <View style={headerStyles.navToggle}>
+        <Image
+          source={require('../asset/hamburger.png')}
+          style={{width: 25, height: 20}}
+        />
+      </View>
+    );
+  }
+}
+
+function loginScreen() {}
+
 const headerStyles = StyleSheet.create({
   header: {
     height: 60,
@@ -61,5 +88,25 @@ const headerStyles = StyleSheet.create({
     color: '#742013',
     fontWeight: 'bold',
     fontSize: 14,
+  },
+  loginBtn: {
+    margin: 10,
+    width: 65,
+    borderRadius: 10,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#D22B2B',
+    flexDirection: 'row',
+  },
+  continue: {
+    color: 'white',
+    fontSize: 12,
+  },
+  loginBtnBox: {
+    width: 75,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

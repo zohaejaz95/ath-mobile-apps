@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import {
   Image,
   ScrollView,
@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {SliderBox} from 'react-native-image-slider-box';
 
+import Header from '../Header';
 import PurchaseOptions from './PurchaseOptions';
 import Menu from './Menu';
 
@@ -19,29 +20,38 @@ const height = width * 0.5;
 export class Landing extends Component {
   constructor(props) {
     super(props);
+    const {navigation} = props;
+    //console.log(props);
     this.state = {
       images: [
         'https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
         'https://images.pexels.com/photos/6267/menu-restaurant-vintage-table.jpg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
         'https://images.pexels.com/photos/2983101/pexels-photo-2983101.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
       ],
+      showLoginButton: true, //reads local storage for account id. Changes showLoginButton accordingly.
     };
   }
   render() {
     return (
-      <View>
-        <View style={styles.sliderView}>
-          <SliderBox
-            style={styles.image}
-            autoplay
-            circleLoop
-            images={this.state.images}
-            autoplayInterval={4000}
-            dotStyle={{width: 0, height: 0}}
-          />
-        </View>
-        <PurchaseOptions />
-        <Menu />
+      <View style={{backgroundColor: 'white', flex: 1}}>
+        <Header
+          login={this.state.showLoginButton}
+          navigation={this.props.navigation}
+        />
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.sliderView}>
+            <SliderBox
+              style={styles.image}
+              autoplay
+              circleLoop
+              images={this.state.images}
+              autoplayInterval={4000}
+              dotStyle={{width: 0, height: 0}}
+            />
+          </View>
+          <PurchaseOptions />
+          <Menu />
+        </ScrollView>
       </View>
     );
   }

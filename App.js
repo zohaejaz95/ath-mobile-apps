@@ -5,7 +5,9 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import Landing from './components/landing/Landing';
 import Login from './components/login/Login';
-import Header from './components/Header';
+import Signup from './components/login/Signup';
+import Password from './components/login/Password';
+import Forget from './components/login/Forget';
 
 const Stack = createNativeStackNavigator();
 export class App extends Component {
@@ -26,18 +28,26 @@ export class App extends Component {
               name="Login"
               component={Login}
               options={{headerShown: false}}
-              // options={{
-              //   headerTitle: props => <Header login={false} {...props} />,
-              // }}
+            />
+            <Stack.Screen
+              name="Signup"
+              component={Signup}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Password"
+              component={Password}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Forget"
+              component={Forget}
+              options={{headerShown: false}}
             />
           </Stack.Navigator>
         </NavigationContainer>
-
-        {/* <Landing login={true} />
-          <Login /> */}
       </SafeAreaView>
     );
   }
 }
-//Landing ---- login prop is true if user has already logged in otherwise false.
 export default App;

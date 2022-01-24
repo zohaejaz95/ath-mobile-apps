@@ -12,6 +12,7 @@ import {SliderBox} from 'react-native-image-slider-box';
 import Header from '../Header';
 import PurchaseOptions from './PurchaseOptions';
 import Menu from './Menu';
+import Navigations from '../Navigations';
 
 const {width} = Dimensions.get('window');
 const widthImg = width - 40;
@@ -52,6 +53,7 @@ export class Landing extends Component {
           <PurchaseOptions />
           <Menu />
         </ScrollView>
+        <Navigations />
       </View>
     );
   }

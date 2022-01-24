@@ -14,8 +14,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icon2 from 'react-native-vector-icons/FontAwesome5';
 
 import BackNav from '../BackNav';
-import PhoneNumber from './PhoneNumber';
-
+//import PhoneNumber from './PhoneNumber';
+import styles1 from '../styles/styles';
 const dimensions = Dimensions.get('window');
 const width = dimensions.width;
 const dimHeight = dimensions.height;
@@ -24,6 +24,7 @@ const height = width * 0.7;
 export class Login extends Component {
   constructor(props) {
     super(props);
+    //const {navigation} = props;
     this.state = {
       checked: false,
     };
@@ -35,7 +36,11 @@ export class Login extends Component {
         <View style={styles.loginText}>
           <Text style={styles.rewards}>Start Earning Rewards</Text>
           <Text style={styles.welcome}>Welcome</Text>
-          <PhoneNumber />
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your email address"
+            //keyboardType="str"
+          />
           <View style={styles.checkView}>
             {/* <View style={styles.checkBox}> */}
             <TouchableOpacity
@@ -56,16 +61,16 @@ export class Login extends Component {
             <Text style={styles.policy}>Terms and Condition</Text>
           </View>
           <TouchableOpacity
-            style={styles.button}
-            onPress={() => Alert.alert('Button Pressed')}>
-            <Text style={styles.continue}>CONTINUE</Text>
+            style={styles1.button}
+            onPress={() => this.props.navigation.navigate('Password')}>
+            <Text style={styles1.continue}>CONTINUE</Text>
           </TouchableOpacity>
           <Text>OR</Text>
           <TouchableOpacity
             style={styles.facebook}
             onPress={() => Alert.alert('Button Pressed')}>
-            <Icon2 style={styles.iconSocial} size={30} name="facebook"></Icon2>
-            <Text style={styles.continue}> Continue with Facebook</Text>
+            <Icon2 style={styles.iconSocial} size={25} name="facebook"></Icon2>
+            <Text style={styles1.continue}> Continue with Facebook</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.google}
@@ -103,7 +108,7 @@ const styles = StyleSheet.create({
   },
   rewards: {
     paddingBottom: 5,
-    color: '#D22B2B',
+    color: '#742013', //'#D22B2B',
     fontSize: 22,
     transform: [{rotate: '-5deg'}],
   },
@@ -128,8 +133,8 @@ const styles = StyleSheet.create({
   },
   checkBox: {
     backgroundColor: '#742013',
-    width: 15,
-    height: 15,
+    width: 16,
+    height: 16,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 2,
@@ -138,8 +143,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderColor: '#742013',
     borderWidth: 1.2,
-    width: 15,
-    height: 15,
+    width: 16,
+    height: 16,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 2,
@@ -154,24 +159,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  button: {
-    margin: 30,
-    width: '70%',
-    borderRadius: 25,
-    height: 45,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#D22B2B',
-  },
-  continue: {
-    color: 'white',
-    fontSize: 14,
-  },
   facebook: {
-    marginTop: 30,
-    width: '70%',
+    marginTop: 10,
+    width: '85%',
     borderRadius: 25,
-    height: 45,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#4267B2',
@@ -179,9 +171,9 @@ const styles = StyleSheet.create({
   },
   google: {
     marginTop: 10,
-    width: '70%',
+    width: '85%',
     borderRadius: 25,
-    height: 45,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#4285F4',
@@ -190,5 +182,13 @@ const styles = StyleSheet.create({
   iconSocial: {
     color: 'white',
     alignContent: 'space-around',
+  },
+  input: {
+    width: '85%',
+    borderRadius: 25,
+    height: 40,
+    borderWidth: 1,
+    borderColor: '#e5e4e2',
+    paddingLeft: 15,
   },
 });

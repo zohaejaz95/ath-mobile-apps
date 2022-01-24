@@ -9,7 +9,6 @@ const BackNav = props => {
       <TouchableOpacity onPress={() => navigation.navigate('Landing')}>
         <Icon size={30} name="arrow-back" style={styles.icon} />
       </TouchableOpacity>
-
       <View style={styles.textView}>{IsLogin(props.login)}</View>
     </View>
   );
@@ -27,8 +26,8 @@ const styles = StyleSheet.create({
     padding: 5,
     height: 50,
     flexDirection: 'row',
-    backgroundColor: '#D22B2B',
-    //backgroundColor: '#742013',
+    //backgroundColor: '#D22B2B',
+    backgroundColor: '#742013',
     alignItems: 'center',
   },
   icon: {

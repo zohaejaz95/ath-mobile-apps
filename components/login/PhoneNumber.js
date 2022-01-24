@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderWidth: 0.5,
     borderColor: '#e5e4e2',
-    height: 50,
-    width: '70%',
+    height: 42,
+    width: '85%',
   },
   country: {
     borderTopLeftRadius: 25,
@@ -62,7 +62,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   numText: {
-    margin: -9,
+    margin: -15,
+    height: 60,
     fontSize: 14,
     color: 'grey',
   },

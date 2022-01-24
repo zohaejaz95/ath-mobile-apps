@@ -42,7 +42,7 @@ const Signup = props => {
 
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
-      <BackNav login={true} navigation={props.navigation} />
+      <BackNav login={true} navigation={props.navigation} innerText="Signup" />
       <View style={signupStyles.signupText}>
         <Text style={styles.pswdText}>Set Password</Text>
         <Text style={styles.text}>Secure your account with a new password</Text>

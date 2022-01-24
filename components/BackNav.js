@@ -9,16 +9,26 @@ const BackNav = props => {
       <TouchableOpacity onPress={() => navigation.navigate('Landing')}>
         <Icon size={30} name="arrow-back" style={styles.icon} />
       </TouchableOpacity>
-      <View style={styles.textView}>{IsLogin(props.login)}</View>
+      <View style={styles.textView}>
+        {IsLogin(props.login, props.innerText)}
+      </View>
     </View>
   );
 };
 
 export default BackNav;
 
-function IsLogin(login) {
+function IsLogin(login, text) {
   //if login component then true else false
-  if (login) return <Text style={styles.text}>Tims Hortans</Text>;
+  if (login) return <Text style={styles.text}>{text}</Text>;
+  else {
+    return (
+      <View>
+        <Text>My Location</Text>
+        {/* <Text>{text}</Text> */}
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -36,10 +46,16 @@ const styles = StyleSheet.create({
   text: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 24,
+    fontSize: 18,
   },
   textView: {
     position: 'absolute',
-    left: '30%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    //left: '40%',
   },
 });

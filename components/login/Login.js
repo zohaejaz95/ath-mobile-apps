@@ -32,7 +32,11 @@ export class Login extends Component {
   render() {
     return (
       <View style={{backgroundColor: 'white', flex: 1}}>
-        <BackNav login={true} navigation={this.props.navigation} />
+        <BackNav
+          login={true}
+          navigation={this.props.navigation}
+          innerText="Login"
+        />
         <View style={styles.loginText}>
           <Text style={styles.rewards}>Start Earning Rewards</Text>
           <Text style={styles.welcome}>Welcome</Text>

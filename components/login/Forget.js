@@ -16,7 +16,11 @@ export class Forget extends Component {
   render() {
     return (
       <View style={{backgroundColor: 'white', flex: 1}}>
-        <BackNav login={true} navigation={this.props.navigation} />
+        <BackNav
+          login={true}
+          navigation={this.props.navigation}
+          innerText="Reset Password"
+        />
         <View style={pswdStyles.pswdText}>
           <Text style={styles.pswdText}>Enter new password</Text>
           <Text style={styles.text}>Please enter your 4-digit password</Text>

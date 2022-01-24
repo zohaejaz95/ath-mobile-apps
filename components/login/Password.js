@@ -13,7 +13,7 @@ import BackNav from '../BackNav';
 const Password = props => {
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
-      <BackNav login={true} navigation={props.navigation} />
+      <BackNav login={true} navigation={props.navigation} innerText="Login" />
       <View style={pswdStyles.pswdText}>
         <Text style={styles.pswdText}>Enter your password</Text>
         <Text style={styles.text}>Please enter your 4-digit password</Text>

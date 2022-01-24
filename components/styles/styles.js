@@ -53,4 +53,9 @@ export default StyleSheet.create({
     color: 'white',
     fontSize: 14,
   },
+  heading: {
+    color: '#742013',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 });

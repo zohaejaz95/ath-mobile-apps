@@ -9,7 +9,7 @@ const BackNav = props => {
       <TouchableOpacity onPress={() => navigation.navigate('Landing')}>
         <Icon size={30} name="arrow-back" style={styles.icon} />
       </TouchableOpacity>
-      <View style={styles.textView}>
+      <View style={props.login ? styles.textView : styles.textLocation}>
         {IsLogin(props.login, props.innerText)}
       </View>
     </View>
@@ -24,8 +24,8 @@ function IsLogin(login, text) {
   else {
     return (
       <View>
-        <Text>My Location</Text>
-        {/* <Text>{text}</Text> */}
+        <Text style={styles.loc}>My Location</Text>
+        <Text style={styles.textLoc}>location selector input</Text>
       </View>
     );
   }
@@ -57,5 +57,17 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     //left: '40%',
+  },
+  loc: {
+    color: 'white',
+    fontSize: 12,
+  },
+  textLoc: {
+    color: 'white',
+    fontSize: 14,
+  },
+  textLocation: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

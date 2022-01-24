@@ -1,5 +1,11 @@
 import React from 'react';
-import {View, Text, StyleSheet, Dimensions} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5Pro';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 
@@ -7,7 +13,7 @@ const {width} = Dimensions.get('window');
 const widthImg = width - 30;
 const height = width * 0.5;
 
-const PurchaseOptions = () => {
+const PurchaseOptions = props => {
   return (
     <View style={styles.optionsBox}>
       <Text style={styles.text}>How would you like to get your purchase?</Text>
@@ -30,7 +36,10 @@ const PurchaseOptions = () => {
           </View>
           <Text style={styles.optionsText}>Delivery</Text>
         </View>
-        <View style={styles.optionsIcons}>
+
+        <TouchableOpacity
+          style={styles.optionsIcons}
+          onPress={() => props.navigation.navigate('Branches')}>
           <View style={styles.options}>
             <Icon2
               style={styles.iconStyles}
@@ -38,7 +47,8 @@ const PurchaseOptions = () => {
               size={38}></Icon2>
           </View>
           <Text style={styles.optionsText}>Pickup</Text>
-        </View>
+        </TouchableOpacity>
+
         <View style={styles.optionsIcons}>
           <View style={styles.options}>
             <Icon2

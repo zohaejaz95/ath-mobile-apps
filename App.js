@@ -8,6 +8,9 @@ import Login from './components/login/Login';
 import Signup from './components/login/Signup';
 import Password from './components/login/Password';
 import Forget from './components/login/Forget';
+import Location from './components/Location';
+import Branches from './components/branches/Branches';
+import Categories from './components/menu/Categories';
 
 const Stack = createNativeStackNavigator();
 export class App extends Component {
@@ -42,6 +45,16 @@ export class App extends Component {
             <Stack.Screen
               name="Forget"
               component={Forget}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Branches"
+              component={Branches}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Categories"
+              component={Categories}
               options={{headerShown: false}}
             />
           </Stack.Navigator>

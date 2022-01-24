@@ -50,7 +50,7 @@ export class Landing extends Component {
               dotStyle={{width: 0, height: 0}}
             />
           </View>
-          <PurchaseOptions />
+          <PurchaseOptions navigation={this.props.navigation} />
           <Menu />
         </ScrollView>
         <Navigations />

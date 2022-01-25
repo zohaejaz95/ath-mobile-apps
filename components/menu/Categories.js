@@ -1,4 +1,11 @@
-import {Text, View, StyleSheet, Image, Dimensions} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import React, {Component} from 'react';
 
 import BackNav from '../BackNav';
@@ -7,27 +14,34 @@ const {width} = Dimensions.get('window');
 const widthBox = width / 2 - 20;
 
 export class Categories extends Component {
+  constructor(props) {
+    super(props);
+  }
   render() {
     return (
       <View style={{backgroundColor: 'white', flex: 1}}>
         <BackNav navigation={this.props.navigation} login={false} />
         <View style={styles.menuOptions}>
-          <View style={styles.menuBox}>
+          <TouchableOpacity
+            style={styles.menuBox}
+            onPress={() => this.props.navigation.navigate('AddToCart')}>
             <Image
               style={styles.images}
               source={{
                 uri: 'https://images.pexels.com/photos/675951/pexels-photo-675951.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
               }}></Image>
             <Text style={styles.menuText}>Bundles</Text>
-          </View>
-          <View style={styles.menuBox}>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.menuBox}
+            onPress={() => this.props.navigation.navigate('AddToCart')}>
             <Image
               style={styles.images}
               source={{
                 uri: 'https://images.pexels.com/photos/3020919/pexels-photo-3020919.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
               }}></Image>
             <Text style={styles.menuText}>Hot Beverages</Text>
-          </View>
+          </TouchableOpacity>
         </View>
         <View style={styles.menuOptions}>
           <View style={styles.menuBox}>

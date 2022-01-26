@@ -11,7 +11,6 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import RBSheet from 'react-native-raw-bottom-sheet';
 
 import BackNav from '../BackNav';
-import styleMain from '../styles/styles';
 import Items from './Items';
 import ViewCart from './ViewCart';
 

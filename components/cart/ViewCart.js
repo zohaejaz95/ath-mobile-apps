@@ -9,8 +9,6 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 
-import styless from '../styles/styles';
-
 const ViewCart = () => {
   return (
     <View style={{flex: 1}}>

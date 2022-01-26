@@ -47,7 +47,11 @@ export class Branches extends Component {
           {branches.branches.map(branch => (
             <TouchableOpacity
               key={branch.key}
-              onPress={() => this.props.navigation.navigate('Categories')}>
+              onPress={() =>
+                this.props.navigation.navigate(this.props.route.params.name, {
+                  name: 'AddToCart',
+                })
+              }>
               <Stores branch={branch} />
             </TouchableOpacity>
           ))}

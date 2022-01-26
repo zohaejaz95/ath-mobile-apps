@@ -24,7 +24,9 @@ export class Categories extends Component {
         <View style={styles.menuOptions}>
           <TouchableOpacity
             style={styles.menuBox}
-            onPress={() => this.props.navigation.navigate('AddToCart')}>
+            onPress={() =>
+              this.props.navigation.navigate(this.props.route.params.name)
+            }>
             <Image
               style={styles.images}
               source={{
@@ -34,7 +36,9 @@ export class Categories extends Component {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.menuBox}
-            onPress={() => this.props.navigation.navigate('AddToCart')}>
+            onPress={() =>
+              this.props.navigation.navigate(this.props.route.params.name)
+            }>
             <Image
               style={styles.images}
               source={{

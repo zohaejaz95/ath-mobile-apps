@@ -14,6 +14,7 @@ import Categories from './components/menu/Categories';
 import AddToCart from './components/cart/AddToCart';
 import Rewards from './components/rewards/Rewards';
 import DineIn from './components/dineIn/DineIn';
+import Reservation from './components/reservation/Reservation';
 
 const Stack = createNativeStackNavigator();
 export class App extends Component {
@@ -73,6 +74,11 @@ export class App extends Component {
             <Stack.Screen
               name="DineIn"
               component={DineIn}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Reservation"
+              component={Reservation}
               options={{headerShown: false}}
             />
           </Stack.Navigator>

@@ -12,7 +12,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import BackNav from '../BackNav';
 import styles1 from '../styles/styles';
 
-const DineIn = props => {
+const Reservation = props => {
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
@@ -51,6 +51,12 @@ const DineIn = props => {
         <TextInput style={styles.outline} />
         <Text>Phone</Text>
         <TextInput style={styles.outline} />
+        <Text>Select Date</Text>
+        <TouchableOpacity
+          style={styles.outline}
+          onPress={() => showMode('date')}>
+          <Text></Text>
+        </TouchableOpacity>
         <Text>Select Time</Text>
         <TouchableOpacity
           style={styles.outline}
@@ -79,7 +85,7 @@ const DineIn = props => {
   );
 };
 //name email phone date select time slot send
-export default DineIn;
+export default Reservation;
 
 const styles = StyleSheet.create({
   main: {

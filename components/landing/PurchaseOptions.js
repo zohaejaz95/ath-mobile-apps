@@ -55,7 +55,11 @@ const PurchaseOptions = props => {
           <Text style={styles.optionsText}>Pickup</Text>
         </TouchableOpacity>
 
-        <View style={styles.optionsIcons}>
+        <TouchableOpacity
+          onPress={() =>
+            props.navigation.navigate('Branches', {name: 'Reservation'})
+          }
+          style={styles.optionsIcons}>
           <View style={styles.options}>
             <Icon2
               style={styles.iconStyles}
@@ -63,7 +67,7 @@ const PurchaseOptions = props => {
               size={38}></Icon2>
           </View>
           <Text style={styles.optionsText}>Reservation</Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );

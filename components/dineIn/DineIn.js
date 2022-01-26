@@ -4,6 +4,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import React, {Component, useState} from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -35,6 +36,10 @@ const DineIn = props => {
     setShow(true);
     setMode(currentMode);
   };
+  const createButtonAlert = () =>
+    Alert.alert('Request Received', 'You will be updated shortly.', [
+      {text: 'OK', onPress: () => console.log('OK Pressed')},
+    ]);
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
       <BackNav navigation={props.navigation} login={true} innerText="Dine In" />
@@ -56,10 +61,7 @@ const DineIn = props => {
         <TextInput style={styles.outline} />
       </View>
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
-        <TouchableOpacity
-          style={styles.button}
-          //onPress={() => this.props.navigation.navigate('Password')}
-        >
+        <TouchableOpacity style={styles.button} onPress={createButtonAlert}>
           <Text style={styles1.continue}>SEND</Text>
         </TouchableOpacity>
       </View>

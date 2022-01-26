@@ -4,13 +4,19 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Dimensions,
 } from 'react-native';
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 import BackNav from '../BackNav';
 import styleMain from '../styles/styles';
 import Items from './Items';
+import ViewCart from './ViewCart';
+
+const {height} = Dimensions.get('window');
+const heightScr = height * 0.8;
 
 export class AddToCart extends Component {
   constructor(props) {
@@ -40,7 +46,7 @@ export class AddToCart extends Component {
     return (
       <View style={{backgroundColor: 'white', flex: 1}}>
         <BackNav navigation={this.props.navigation} login={false} />
-        <View>
+        <View style={{flex: 7}}>
           <View style={styles.menuOptions}>
             <Icon style={styles.iconColor} size={25} name="grip-lines" />
             <TouchableOpacity style={styles.selectedBtn}>
@@ -74,17 +80,46 @@ export class AddToCart extends Component {
             ))}
           </ScrollView>
         </View>
+        <View style={styles.bottom}>
+          <View style={styles.itemsCart}>
+            <Text style={styles.priceColor}>0 Items Selected</Text>
+            <Text style={styles.selectedColor}>AED 00.00</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.viewCartBtn}
+            title="OPEN BOTTOM SHEET"
+            onPress={() => this.RBSheet.open()}>
+            <Text style={styles.viewCart}> View Cart</Text>
+          </TouchableOpacity>
+        </View>
+        <RBSheet
+          ref={ref => {
+            this.RBSheet = ref;
+          }}
+          height={heightScr}
+          openDuration={250}>
+          <ViewCart />
+        </RBSheet>
       </View>
     );
   }
 }
-
+// customStyles={{
+//   container: {
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//   },
+// }}
 export default AddToCart;
 
 const styles = StyleSheet.create({
   selectedColor: {
     color: 'white',
     fontSize: 12,
+  },
+  priceColor: {
+    color: 'white',
+    fontSize: 11,
   },
   unselectedColor: {
     fontSize: 12,
@@ -114,5 +149,29 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#742013',
     paddingLeft: 15,
+  },
+  bottom: {
+    flex: 0.6,
+    backgroundColor: '#742013',
+    width: '100%',
+    flexDirection: 'row',
+  },
+  itemsCart: {
+    flex: 1,
+    marginTop: 7,
+    marginLeft: 15,
+  },
+  viewCart: {
+    flex: 1,
+    textAlign: 'right',
+    marginRight: 15,
+    color: 'white',
+    fontSize: 14,
+  },
+  viewCartBtn: {
+    width: 90,
+    height: 60,
+    marginTop: 15,
+    alignItems: 'center',
   },
 });

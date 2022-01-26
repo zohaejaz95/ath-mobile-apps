@@ -18,7 +18,11 @@ const PurchaseOptions = props => {
     <View style={styles.optionsBox}>
       <Text style={styles.text}>How would you like to get your purchase?</Text>
       <View style={styles.optionsView}>
-        <View style={styles.optionsIcons}>
+        <TouchableOpacity
+          onPress={() =>
+            props.navigation.navigate('Branches', {name: 'DineIn'})
+          }
+          style={styles.optionsIcons}>
           <View style={styles.options}>
             <Icon2
               style={styles.iconStyles}
@@ -26,7 +30,7 @@ const PurchaseOptions = props => {
               size={38}></Icon2>
           </View>
           <Text style={styles.optionsText}>Dine In</Text>
-        </View>
+        </TouchableOpacity>
         <View style={styles.optionsIcons}>
           <View style={styles.options}>
             <Icon2
@@ -39,7 +43,9 @@ const PurchaseOptions = props => {
 
         <TouchableOpacity
           style={styles.optionsIcons}
-          onPress={() => props.navigation.navigate('Branches')}>
+          onPress={() =>
+            props.navigation.navigate('Branches', {name: 'Categories'})
+          }>
           <View style={styles.options}>
             <Icon2
               style={styles.iconStyles}

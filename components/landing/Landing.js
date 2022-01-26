@@ -53,7 +53,7 @@ export class Landing extends Component {
           <PurchaseOptions navigation={this.props.navigation} />
           <Menu />
         </ScrollView>
-        <Navigations />
+        <Navigations navigation={this.props.navigation} />
       </View>
     );
   }

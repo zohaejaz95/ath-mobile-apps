@@ -12,6 +12,7 @@ import Location from './components/Location';
 import Branches from './components/branches/Branches';
 import Categories from './components/menu/Categories';
 import AddToCart from './components/cart/AddToCart';
+import Rewards from './components/rewards/Rewards';
 
 const Stack = createNativeStackNavigator();
 export class App extends Component {
@@ -61,6 +62,11 @@ export class App extends Component {
             <Stack.Screen
               name="AddToCart"
               component={AddToCart}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Rewards"
+              component={Rewards}
               options={{headerShown: false}}
             />
           </Stack.Navigator>

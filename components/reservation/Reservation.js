@@ -42,7 +42,11 @@ const Reservation = props => {
     ]);
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
-      <BackNav navigation={props.navigation} login={true} innerText="Dine In" />
+      <BackNav
+        navigation={props.navigation}
+        login={true}
+        innerText="Reservation"
+      />
       <View style={styles.main}>
         <Text style={styles.heading}>Your Personal Details</Text>
         <Text>Name</Text>

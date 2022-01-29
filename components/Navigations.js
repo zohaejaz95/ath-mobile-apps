@@ -1,46 +1,54 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 //import font from './styles/GOUDOS.ttf';
+import {useRoute} from '@react-navigation/native';
+
 const colour = '#742013';
 var page = 'home';
 const Navigations = props => {
   const {navigation} = props;
+  const route = useRoute();
+  page = route.name;
   return (
     <View style={styles.navbar}>
       <TouchableOpacity
         style={styles.options}
-        onPress={() => navigatePage(navigation, 'home')}>
+        onPress={() => navigatePage(navigation, 'Landing')}>
         <Icon
-          style={{color: page === 'home' ? colour : 'grey'}}
+          color={page === 'Landing' ? colour : 'grey'}
           name="canadian-maple-leaf"
           size={20}></Icon>
-        <Text style={{color: page === 'home' ? colour : 'grey'}}>Home</Text>
+        <Text style={{color: page === 'Landing' ? colour : 'grey'}}>Home</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.options}
-        onPress={() => navigatePage(navigation, 'rewards')}>
+        onPress={() => navigatePage(navigation, 'Rewards')}>
         {/* <Icon name="bars" size={20}></Icon> */}
         <Text style={styles.tims}>Tims</Text>
-        <Text style={{color: page === 'rewards' ? colour : 'grey'}}>
+        <Text style={{color: page === 'Rewards' ? colour : 'grey'}}>
           Rewards
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.options}>
+      <TouchableOpacity
+        style={styles.options}
+        onPress={() => navigatePage(navigation, 'Stores')}>
         <Icon
-          style={{color: page === 'stores' ? colour : 'grey'}}
+          color={page === 'Stores' ? colour : 'grey'}
           name="map-marker-alt"
           size={20}></Icon>
-        <Text style={{color: page === 'stores' ? colour : 'grey'}}>Stores</Text>
+        <Text style={{color: page === 'Stores' ? colour : 'grey'}}>Stores</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.options}>
+      <TouchableOpacity
+        style={styles.options}
+        onPress={() => navigatePage(navigation, 'More')}>
         <Icon2
-          style={{color: page === 'more' ? colour : 'grey'}}
+          color={page === 'More' ? colour : 'grey'}
           name="signal-cellular-alt"
           size={20}
           style={styles.icon}></Icon2>
-        <Text style={{color: page === 'more' ? colour : 'grey'}}>More</Text>
+        <Text style={{color: page === 'More' ? colour : 'grey'}}>More</Text>
       </TouchableOpacity>
     </View>
   );
@@ -50,18 +58,8 @@ export default Navigations;
 
 function navigatePage(nav, pg) {
   page = pg;
-  if (pg === 'home') {
-    return nav.navigate('Landing');
-  }
-  if (pg === 'rewards') {
-    return nav.navigate('Rewards');
-  }
-  if (pg === 'stores') {
-    return nav.navigate('Landing');
-  }
-  if (pg === 'more') {
-    return nav.navigate('Landing');
-  }
+  if (pg === 'Stores') return nav.navigate('Branches');
+  return nav.navigate(pg);
 }
 const styles = StyleSheet.create({
   navbar: {

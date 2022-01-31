@@ -17,6 +17,9 @@ import DineIn from './components/dineIn/DineIn';
 import Reservation from './components/reservation/Reservation';
 import More from './components/more/More';
 import Orders from './components/orders/Orders';
+import OrderDetails from './components/orders/OrderDetails';
+import ViewProfile from './components/profile/ViewProfile';
+import EditProfile from './components/profile/EditProfile';
 
 const Stack = createNativeStackNavigator();
 export class App extends Component {
@@ -91,6 +94,21 @@ export class App extends Component {
             <Stack.Screen
               name="Orders"
               component={Orders}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="OrderDetails"
+              component={OrderDetails}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="ViewProfile"
+              component={ViewProfile}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="EditProfile"
+              component={EditProfile}
               options={{headerShown: false}}
             />
           </Stack.Navigator>

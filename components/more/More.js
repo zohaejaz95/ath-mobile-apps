@@ -3,23 +3,29 @@ import React, {useState} from 'react';
 import Navigations from '../Navigations';
 
 const More = props => {
-  const list = [
-    'My Profile',
-    'My Orders',
-    'Favourites',
-    'My Offers',
-    'News',
-    'About Us',
-    'Contact Us',
-    'FAQ',
-    'Terms & Conditions',
-    'Ver 1.0.0',
+  const displayList = [
+    {text: 'My Profile', nav: 'ViewProfile'},
+    {text: 'My Orders', nav: 'Orders'},
+    {text: 'Favourites', nav: ''},
+    {text: 'My Offers', nav: ''},
+    {text: 'News', nav: ''},
+    {text: 'About Us', nav: ''},
+    {text: 'Contact Us', nav: ''},
+    {text: 'FAQ', nav: ''},
+    {text: 'Terms & Conditions', nav: ''},
+    {text: 'Ver 1.0.0', nav: ''},
   ];
+  function navigatePages(nav, name) {
+    nav.navigate(name);
+  }
   return (
     <View style={styles.box}>
-      {list.map((item, index) => (
-        <TouchableOpacity key={index} style={styles.items}>
-          <Text style={styles.itemText}>{item}</Text>
+      {displayList.map((item, index) => (
+        <TouchableOpacity
+          key={index}
+          style={styles.items}
+          onPress={() => navigatePages(props.navigation, item.nav)}>
+          <Text style={styles.itemText}>{item.text}</Text>
         </TouchableOpacity>
       ))}
       <TouchableOpacity style={styles.logoutBtn}>

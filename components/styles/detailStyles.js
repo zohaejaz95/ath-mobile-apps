@@ -39,6 +39,6 @@ export default StyleSheet.create({
     color: 'black',
     fontSize: 14,
     marginBottom: 5,
-    fontWeight: '300',
+    fontWeight: '500',
   },
 });

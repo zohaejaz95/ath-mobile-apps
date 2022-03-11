@@ -16,32 +16,63 @@ import ViewCart from './ViewCart';
 
 const {height} = Dimensions.get('window');
 const heightScr = height * 0.8;
+const token = 'AAAA-BBBB-CCCC-DDDD';
+const url =
+  Platform.OS === 'ios' ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
 
 export class AddToCart extends Component {
   constructor(props) {
     super(props);
-  }
-  render() {
-    var items = {
-      items: [
-        {
-          key: 1,
-          image:
-            'https://images.pexels.com/photos/10152629/pexels-photo-10152629.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
-          name: 'Iced Green Tea Mango and Cold Cup',
-          price: 'AED 69.00',
-          points: 10,
-        },
-        {
-          key: 2,
-          image:
-            'https://images.pexels.com/photos/262047/pexels-photo-262047.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
-          name: 'Iced Green Tea Yuzu and Cold Cup',
-          price: 'AED 49.00',
-          points: 15,
-        },
-      ],
+    this.state = {
+      categoryId: props.route.params.category,
+      bundles: [],
+      items: [],
+      categoryName: props.route.params.categoryName,
+      cart: {
+        id: '',
+        count: 0,
+      },
     };
+  }
+
+  componentDidMount() {
+    let arr = [];
+    //console.log(this.props.route.params.category);
+    fetch(`${url}/get/menu/category/${this.props.route.params.category}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(async res => {
+        try {
+          const jsonRes = await res.json();
+          if (res.status === 200) {
+            //console.log(jsonRes);
+            jsonRes.map((item, i) => {
+              if (item.discount !== 0 || item.discount !== undefined) {
+                item.count = 0;
+                jsonRes[i].count = 0;
+                arr.push(item);
+              }
+            });
+            //console.log(arr);
+            this.setState({
+              items: jsonRes,
+              bundles: arr,
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  render() {
     return (
       <View style={{backgroundColor: 'white', flex: 1}}>
         <BackNav navigation={this.props.navigation} login={false} />
@@ -52,29 +83,30 @@ export class AddToCart extends Component {
               <Text style={styles.selectedColor}>Bundles</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.unselectedBtn}>
-              <Text style={styles.unselectedColor}>Hot Beverages</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.unselectedBtn}>
-              <Text style={styles.unselectedColor}>Cold Beverages</Text>
+              <Text style={styles.unselectedColor}>
+                {this.state.categoryName}
+              </Text>
             </TouchableOpacity>
           </View>
           <ScrollView showsVerticalScrollIndicator={false}>
             <Text style={styles.mainText}>Bundles</Text>
-            {items.items.map(item => (
-              <View key={items.key}>
-                <Items items={item} />
+            {this.state.bundles.map(item => (
+              <View key={item.id}>
+                <Items
+                  items={item}
+                  bundles={true}
+                  branch={this.props.route.params}
+                />
               </View>
             ))}
-            <Text style={styles.mainText}>Hot Beverages</Text>
-            {items.items.map(item => (
-              <View key={items.key}>
-                <Items items={item} />
-              </View>
-            ))}
-            <Text style={styles.mainText}>Cold Beverages</Text>
-            {items.items.map(item => (
-              <View key={items.key}>
-                <Items items={item} />
+            <Text style={styles.mainText}>{this.state.categoryName}</Text>
+            {this.state.items.map(item => (
+              <View key={item.id}>
+                <Items
+                  items={item}
+                  bundles={false}
+                  branch={this.props.route.params}
+                />
               </View>
             ))}
           </ScrollView>

@@ -1,10 +1,41 @@
 import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import {useIsFocused, useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import BackNav from '../BackNav';
 
 const ViewProfile = props => {
+  const [customer, setCustomer] = useState('');
+  const [token, setToken] = useState('');
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      getData();
+      return () => {
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+        console.log('Unfocused');
+      };
+    }, []),
+  );
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('customer');
+      if (value !== null) {
+        let data = JSON.parse(value);
+        setCustomer(data.cust);
+        setToken(data.acessToken);
+        // value previously stored
+      } else {
+      }
+    } catch (e) {
+      console.log(e);
+      //return false;
+      // error reading value
+    }
+  };
   return (
     <View style={styles.box}>
       <BackNav navigation={props.navigation} login={true} innerText="Profile" />
@@ -22,12 +53,12 @@ const ViewProfile = props => {
             }}
           />
         </View>
-        <Text style={styles.nameText}>Name</Text>
+        <Text style={styles.nameText}>{customer.name}</Text>
       </View>
       <View style={styles.profileInfo}>
-        <Text style={styles.detailsText}>Email</Text>
-        <Text style={styles.detailsText}>Phone Number</Text>
-        <Text style={styles.detailsText}>DoB</Text>
+        <Text style={styles.detailsText}>{customer.email}</Text>
+        <Text style={styles.detailsText}>{customer.phone}</Text>
+        <Text style={styles.detailsText}>{customer.dob}</Text>
       </View>
       <View style={styles.socialBox}>
         <Text style={styles.socialText}>Join us on Social Media</Text>

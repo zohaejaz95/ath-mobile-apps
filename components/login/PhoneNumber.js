@@ -11,23 +11,22 @@ const PhoneNumber = () => {
       <PhoneInput
         ref={phoneInput}
         defaultValue={value}
-        defaultCode="DM"
+        //defaultCode="DM"
         layout="first"
         placeholder="Mobile number"
         defaultCode="AE"
         autoFocus={false}
-        // onChangeText={text => {
-        //   setValue(text);
-        // }}
-        // onChangeFormattedText={text => {
-        //   setFormattedValue(text);
-        // }}
+        onChangeText={text => {
+          setValue(text);
+        }}
+        onChangeFormattedText={text => {
+          setFormattedValue(text);
+        }}
         containerStyle={styles.number}
         countryPickerButtonStyle={styles.country}
         codeTextStyle={styles.input}
         textContainerStyle={styles.picker}
         textInputStyle={styles.numText}
-        autoFocus
       />
     </View>
   );

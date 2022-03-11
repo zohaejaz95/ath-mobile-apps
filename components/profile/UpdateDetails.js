@@ -5,18 +5,87 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {useIsFocused, useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import PhoneNumber from '../login/PhoneNumber';
 import styles1 from '../styles/styles';
+import PhoneInput from 'react-native-phone-number-input';
 
-const UpdateDetails = () => {
-  const [date, setDate] = useState(new Date());
+const UpdateDetails = props => {
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
-  const [text, setText] = useState('Empty');
+  const [text, setText] = useState('');
+  const [customer, setCustomer] = useState('');
+  const [date, setDate] = useState(customer.dob);
+  const [token, setToken] = useState('');
+
+  const phoneInput = useRef(<PhoneInput></PhoneInput>);
+  const [formattedValue, setFormattedValue] = useState('');
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [time, setTime] = useState('00:00');
+  const [dateTime, setDateTime] = useState(new Date());
+  const url =
+    Platform.OS === 'ios' ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      getData();
+      //console.log(AsyncStorage.getItem('customer'));
+
+      return () => {
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+        console.log('Unfocused');
+      };
+    }, []),
+  );
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('customer');
+      console.log(value);
+      if (value !== null) {
+        let data = JSON.parse(value);
+        console.log(data);
+        setCustomer(data.cust);
+        setToken(data.accessToken);
+        setName(data.cust.name);
+        setEmail(data.cust.email);
+        setPhone(data.cust.phone);
+        setText(data.cust.phone);
+        console.log(phone);
+        let dob = new Date(data.cust.dob);
+        let fullDate =
+          dob.getDate() + '/' + dob.getMonth() + '/' + dob.getFullYear();
+        console.log(fullDate);
+        setDate(fullDate);
+        console.log(date);
+        //return value;
+        // value previously stored
+      } else {
+      }
+    } catch (e) {
+      console.log(e);
+      //return false;
+      // error reading value
+    }
+  };
+
+  const storeData = async value => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem('customer', jsonValue);
+    } catch (e) {
+      // saving error
+    }
+  };
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -38,28 +107,101 @@ const UpdateDetails = () => {
     setShow(true);
     setMode(currentMode);
   };
+
+  function updateCustomer() {
+    var phoneno = /^\d{10}$/;
+    if (name !== '') {
+      if (date !== null) {
+        console.log(formattedValue);
+        if (formattedValue.match(phoneno)) {
+          let cust = {
+            email: email,
+            phoneNumber: formattedValue,
+            name: name,
+            dob: date,
+          };
+          fetch(`${url}/customer/update/${customer.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(cust),
+          })
+            .then(async res => {
+              try {
+                const jsonRes = await res.json();
+                if (res.status !== 200) {
+                  Alert.alert('Error', 'Unable to update', [
+                    {
+                      text: 'Cancel',
+                      onPress: () => console.log('Cancel Pressed'),
+                      style: 'cancel',
+                    },
+                    {text: 'OK', onPress: () => console.log('OK Pressed')},
+                  ]);
+                } else {
+                  console.log(jsonRes);
+                  storeData(jsonRes);
+                  //props.navigation.navigate('ViewProfile');
+                }
+              } catch (err) {
+                console.log(err);
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        } else {
+          alert('Invalid Phone Number!');
+        }
+      } else alert('Invalid Date of Birth!');
+    } else alert('Enter you name!');
+  }
+
   return (
     <View style={styles.box}>
       <Text style={styles.labels}>Full Name</Text>
       <TextInput
+        value={name}
         style={styles.input}
         placeholder="Enter your full Name"
         //keyboardType="str"
       />
       <Text style={styles.labels}>Email Address</Text>
       <TextInput
+        value={email}
         style={styles.input}
         placeholder="Enter your email address"
         //keyboardType="str"
       />
       <Text style={styles.labels}>Phone Number</Text>
-      <PhoneNumber />
+      <PhoneInput
+        ref={phoneInput}
+        defaultValue={phone}
+        layout="first"
+        placeholder="Mobile number"
+        defaultCode="AE"
+        autoFocus={false}
+        onChangeText={text => {
+          setPhone(text);
+        }}
+        onChangeFormattedText={text => {
+          setFormattedValue(text.replace(/[^\d]/g, ''));
+        }}
+        containerStyle={styles.number}
+        countryPickerButtonStyle={styles.country}
+        codeTextStyle={styles.input}
+        textContainerStyle={styles.picker}
+        textInputStyle={styles.numText}
+        //autoFocus
+      />
       <Text style={styles.labels}>Date of Birth</Text>
       <View style={styles.inputBox}>
         <TextInput
           style={styles.dateBox}
           //onChangeText={onChangePin1}
-          //value={dateInput}
+          value={date}
           placeholder="Select Date of Birth"
           keyboardType="numeric"
         />
@@ -71,7 +213,7 @@ const UpdateDetails = () => {
         <Text style={styles.textPswd}>Change Password</Text>
         <Icon name="arrow-right" size={30} color={'#742013'} />
       </TouchableOpacity>
-      <TouchableOpacity style={styles1.button}>
+      <TouchableOpacity style={styles1.button} onPress={() => updateCustomer()}>
         <Text style={styles1.continue}>SAVE</Text>
       </TouchableOpacity>
       {show && (
@@ -134,5 +276,39 @@ const styles = StyleSheet.create({
   textPswd: {
     color: '#742013',
     fontSize: 16,
+  },
+
+  number: {
+    borderRadius: 25,
+    borderWidth: 0.5,
+    borderColor: '#e5e4e2',
+    height: 42,
+    width: '85%',
+    marginTop: 5,
+    marginBottom: 10,
+  },
+  country: {
+    borderTopLeftRadius: 25,
+    borderBottomLeftRadius: 25,
+    borderWidth: 0.5,
+    borderColor: '#e5e4e2',
+  },
+  input: {
+    marginTop: -5,
+    fontSize: 14,
+    color: 'grey',
+  },
+  picker: {
+    borderTopRightRadius: 25,
+    borderBottomRightRadius: 25,
+    borderWidth: 0.5,
+    borderColor: '#e5e4e2',
+    backgroundColor: 'white',
+  },
+  numText: {
+    margin: -15,
+    height: 60,
+    fontSize: 14,
+    color: 'grey',
   },
 });

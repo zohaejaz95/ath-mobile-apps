@@ -7,8 +7,10 @@ const Stores = props => {
     <View style={styles.stores}>
       <Image source={{uri: branch.image}} style={styles.images} />
       <View style={styles.infoBox}>
-        <Text style={styles.storeName}>{branch.name.toUpperCase()}</Text>
-        <Text style={styles.floor}>{branch.floor.toUpperCase()}</Text>
+        <View style={{paddingRight: 80}}>
+          <Text style={styles.storeName}>{branch.name.toUpperCase()}</Text>
+        </View>
+        <Text style={styles.floor}>{branch.floor.toUpperCase()} FLOOR</Text>
         <Text style={styles.distance}>{branch.distance}</Text>
       </View>
     </View>
@@ -21,15 +23,15 @@ const styles = StyleSheet.create({
   stores: {
     padding: 10,
     flexDirection: 'row',
-    height: 95,
+    height: 110,
     marginBottom: 10,
     borderWidth: 1.5,
     borderRadius: 8,
     borderColor: '#e5e4e2',
   },
   images: {
-    width: 70,
-    height: 70,
+    width: 85,
+    height: 85,
   },
   infoBox: {
     marginLeft: 15,

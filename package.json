@@ -10,9 +10,11 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.16.1",
     "@react-native-community/datetimepicker": "^5.1.0",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
+    "axios": "^0.26.0",
     "react": "17.0.2",
     "react-native": "0.66.4",
     "react-native-image-slider-box": "^1.1.14",
@@ -23,6 +25,7 @@
     "react-native-screens": "^3.10.2",
     "react-native-snap-carousel": "^3.9.1",
     "react-native-vector-icons": "^9.0.0",
+    "sync-storage": "^0.4.2",
     "uuidv4": "^6.2.12"
   },
   "devDependencies": {

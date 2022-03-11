@@ -1,4 +1,10 @@
-import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
@@ -6,10 +12,65 @@ import BackNav from '../BackNav';
 import Stores from './Stores';
 import myStyles from '../styles/styles';
 
+const token = 'AAAA-BBBB-CCCC-DDDD';
+const url =
+  Platform.OS === 'ios' ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
+
+const headerConfig = {
+  headers: {
+    'Content-Type': 'application/json;charset=UTF-8',
+    'Access-Control-Allow-Origin': '*',
+    Authorization: `Bearer ${token}`,
+  },
+};
+
 export class Branches extends Component {
   constructor(props) {
     super(props);
     const {navigation} = props;
+    this.state = {
+      branches: [],
+    };
+  }
+
+  componentDidMount() {
+    let arr = [];
+    fetch(`${url}/get/all/branches`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(async res => {
+        try {
+          const jsonRes = await res.json();
+          if (res.status === 200) {
+            //console.log(jsonRes);
+
+            jsonRes.map((branches, i) => {
+              let data = {
+                id: branches.id,
+                key: i,
+                image: branches.image,
+                name: branches.name,
+                floor: branches.floor,
+                distance: '1.1 km', //it needs to calculated from google maps using customer location
+              };
+              arr.push(data);
+            });
+            //console.log(arr);
+            this.setState({
+              branches: arr,
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   render() {
@@ -44,20 +105,21 @@ export class Branches extends Component {
               <Text style={styles.colorMap}>Map</Text>
             </TouchableOpacity>
           </View>
-          {branches.branches.map(branch => (
-            <TouchableOpacity
-              key={branch.key}
-              onPress={() =>
-                this.props.navigation.navigate(this.props.route.params.name, {
-                  name: 'AddToCart',
-                })
-              }>
-              <Stores branch={branch} />
-            </TouchableOpacity>
-          ))}
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {this.state.branches.map(branch => (
+              <TouchableOpacity
+                key={branch.key}
+                onPress={() =>
+                  this.props.navigation.navigate(this.props.route.params.name, {
+                    name: 'AddToCart',
+                    branchId: branch.id,
+                  })
+                }>
+                <Stores branch={branch} />
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
-
-        <Text></Text>
       </View>
     );
   }

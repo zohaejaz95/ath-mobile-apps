@@ -20,6 +20,9 @@ const dimensions = Dimensions.get('window');
 const width = dimensions.width;
 const dimHeight = dimensions.height;
 const height = width * 0.7;
+const token = 'AAAA-BBBB-CCCC-DDDD';
+const url =
+  Platform.OS === 'ios' ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
 
 export class Login extends Component {
   constructor(props) {
@@ -27,7 +30,62 @@ export class Login extends Component {
     //const {navigation} = props;
     this.state = {
       checked: false,
+      email: '',
+      customer: [],
     };
+    //sessionStorage.setItem('token', '');
+  }
+  setEmail(email) {
+    this.setState({
+      email: email,
+    });
+  }
+
+  continue() {
+    if (
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.state.email)
+    ) {
+      if (this.state.checked) {
+        fetch(`${url}/get/customer/email/${this.state.email}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then(async res => {
+            try {
+              const jsonRes = await res.json();
+              console.log(res);
+              if (res.status === 200) {
+                if (this.state.email === jsonRes.email) {
+                  this.state.customer = jsonRes;
+                  this.props.navigation.navigate('Password', {
+                    customer: jsonRes,
+                  });
+                } else {
+                  this.props.navigation.navigate('Forget');
+                }
+              } else {
+                this.props.navigation.navigate('Signup', {
+                  email: this.state.email,
+                });
+              }
+            } catch (err) {
+              console.log(err);
+              this.props.navigation.navigate('Signup', {
+                email: this.state.email,
+              });
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      } else {
+        alert('Agree Terms and Conditions to proceed');
+      }
+    } else alert('Invalid Email!');
+    //() => this.props.navigation.navigate('Password')
   }
   render() {
     return (
@@ -43,6 +101,8 @@ export class Login extends Component {
           <TextInput
             style={styles.input}
             placeholder="Enter your email address"
+            defaultValue={this.state.email}
+            onChangeText={email => this.setState({email: email})}
             //keyboardType="str"
           />
           <View style={styles.checkView}>
@@ -66,7 +126,7 @@ export class Login extends Component {
           </View>
           <TouchableOpacity
             style={styles1.button}
-            onPress={() => this.props.navigation.navigate('Password')}>
+            onPress={e => this.continue()}>
             <Text style={styles1.continue}>CONTINUE</Text>
           </TouchableOpacity>
           <Text>OR</Text>

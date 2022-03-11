@@ -1,6 +1,8 @@
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import Navigations from '../Navigations';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useFocusEffect} from '@react-navigation/native';
 
 const More = props => {
   const displayList = [
@@ -15,8 +17,54 @@ const More = props => {
     {text: 'Terms & Conditions', nav: ''},
     {text: 'Ver 1.0.0', nav: ''},
   ];
+  const [log, setLog] = useState(true);
   function navigatePages(nav, name) {
     nav.navigate(name);
+  }
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setTimeout(() => {
+        getData();
+      }, 1000);
+
+      return () => {
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+        //console.log('Unfocused');
+      };
+    }, []),
+  );
+
+  const removeData = async () => {
+    try {
+      //const jsonValue = JSON.stringify(value);
+      await AsyncStorage.removeItem('customer');
+      //await AsyncStorage.setItem('customer', '');
+    } catch (e) {
+      // saving error
+    }
+  };
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('customer');
+      console.log(value);
+      if (value !== null) {
+        setLog(true);
+      } else {
+        setLog(false);
+      }
+    } catch (e) {
+      console.log(e);
+      setLog(false);
+      //return false;
+      // error reading value
+    }
+  };
+  function logout() {
+    removeData();
+    setLog(false);
   }
   return (
     <View style={styles.box}>
@@ -28,9 +76,16 @@ const More = props => {
           <Text style={styles.itemText}>{item.text}</Text>
         </TouchableOpacity>
       ))}
-      <TouchableOpacity style={styles.logoutBtn}>
-        <Text style={styles.logout}>Logout</Text>
-      </TouchableOpacity>
+      {log ? (
+        <TouchableOpacity style={styles.logoutBtn}>
+          <Text style={styles.logout} onPress={() => logout()}>
+            Logout
+          </Text>
+        </TouchableOpacity>
+      ) : (
+        <></>
+      )}
+
       <View style={styles.nav}>
         <Navigations navigation={props.navigation} />
       </View>

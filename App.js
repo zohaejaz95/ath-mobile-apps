@@ -35,6 +35,7 @@ export class App extends Component {
               // options={{
               //   headerTitle: props => <Header login={false} {...props} />,
               // }}
+              customer={({params}) => params.customer}
             />
             <Stack.Screen
               name="Login"

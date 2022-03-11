@@ -12,58 +12,78 @@ import BackNav from '../BackNav';
 
 const {width} = Dimensions.get('window');
 const widthBox = width / 2 - 20;
+const token = 'AAAA-BBBB-CCCC-DDDD';
+const url =
+  Platform.OS === 'ios' ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
 
 export class Categories extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      branchId: props.route.params.branchId,
+      categories: [],
+    };
+  }
+  componentDidMount() {
+    let arr = [];
+    console.log(this.props.route.params.branchId);
+    fetch(`${url}/get/category/branch/${this.props.route.params.branchId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(async res => {
+        try {
+          const jsonRes = await res.json();
+          if (res.status === 200) {
+            //console.log(jsonRes);
+            jsonRes.map((categories, i) => {
+              let data = {
+                id: categories.id,
+                image: categories.image,
+                name: categories.name,
+              };
+              arr.push(data);
+            });
+            //console.log(arr);
+            this.setState({
+              categories: arr,
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
   render() {
     return (
       <View style={{backgroundColor: 'white', flex: 1}}>
         <BackNav navigation={this.props.navigation} login={false} />
         <View style={styles.menuOptions}>
-          <TouchableOpacity
-            style={styles.menuBox}
-            onPress={() =>
-              this.props.navigation.navigate(this.props.route.params.name)
-            }>
-            <Image
-              style={styles.images}
-              source={{
-                uri: 'https://images.pexels.com/photos/675951/pexels-photo-675951.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
-              }}></Image>
-            <Text style={styles.menuText}>Bundles</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.menuBox}
-            onPress={() =>
-              this.props.navigation.navigate(this.props.route.params.name)
-            }>
-            <Image
-              style={styles.images}
-              source={{
-                uri: 'https://images.pexels.com/photos/3020919/pexels-photo-3020919.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-              }}></Image>
-            <Text style={styles.menuText}>Hot Beverages</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.menuOptions}>
-          <View style={styles.menuBox}>
-            <Image
-              style={styles.images}
-              source={{
-                uri: 'https://images.pexels.com/photos/3609894/pexels-photo-3609894.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-              }}></Image>
-            <Text style={styles.menuText}>Sandwiches</Text>
-          </View>
-          <View style={styles.menuBox}>
-            <Image
-              style={styles.images}
-              source={{
-                uri: 'https://images.pexels.com/photos/2983101/pexels-photo-2983101.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-              }}></Image>
-            <Text style={styles.menuText}>Snacking</Text>
-          </View>
+          {this.state.categories.map(category => (
+            <TouchableOpacity
+              key={category.id}
+              style={styles.menuBox}
+              onPress={() =>
+                this.props.navigation.navigate(this.props.route.params.name, {
+                  category: category.id,
+                  categoryName: category.name,
+                  branchId: this.state.branchId,
+                })
+              }>
+              <Image
+                style={styles.images}
+                source={{
+                  uri: category.image,
+                }}></Image>
+              <Text style={styles.menuText}>{category.name}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
     );

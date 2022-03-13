@@ -9,6 +9,8 @@ import {
 import React, {Component} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import {useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import BackNav from '../BackNav';
 import Items from './Items';
@@ -17,8 +19,28 @@ import ViewCart from './ViewCart';
 const {height} = Dimensions.get('window');
 const heightScr = height * 0.8;
 const token = 'AAAA-BBBB-CCCC-DDDD';
+var length = 0;
 const url =
   Platform.OS === 'ios' ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
+const getCart = async () => {
+  try {
+    const value = await AsyncStorage.getItem('cart');
+    //console.log(value);
+    if (value !== null) {
+      let data = JSON.parse(value);
+      length = data.length;
+      data.forEach(element => {
+        console.log(element);
+      });
+      return data.length;
+      // value previously stored
+    } else {
+    }
+  } catch (e) {
+    //return false;
+    // error reading value
+  }
+};
 
 export class AddToCart extends Component {
   constructor(props) {
@@ -32,10 +54,14 @@ export class AddToCart extends Component {
         id: '',
         count: 0,
       },
+      totalPrice: '',
+      selectedItems: 0,
     };
   }
 
   componentDidMount() {
+    let count = getCart();
+    console.log('Count', count);
     let arr = [];
     //console.log(this.props.route.params.category);
     fetch(`${url}/get/menu/category/${this.props.route.params.category}`, {
@@ -51,9 +77,10 @@ export class AddToCart extends Component {
           if (res.status === 200) {
             //console.log(jsonRes);
             jsonRes.map((item, i) => {
-              if (item.discount !== 0 || item.discount !== undefined) {
+              console.log(item.discount);
+              if (item.discount > 0) {
                 item.count = 0;
-                jsonRes[i].count = 0;
+                //jsonRes[i].count = 0;
                 arr.push(item);
               }
             });
@@ -113,7 +140,7 @@ export class AddToCart extends Component {
         </View>
         <View style={styles.bottom}>
           <View style={styles.itemsCart}>
-            <Text style={styles.priceColor}>0 Items Selected</Text>
+            <Text style={styles.priceColor}>{length} Items Selected</Text>
             <Text style={styles.selectedColor}>AED 00.00</Text>
           </View>
           <TouchableOpacity
@@ -129,7 +156,7 @@ export class AddToCart extends Component {
           }}
           height={heightScr}
           openDuration={250}>
-          <ViewCart />
+          <ViewCart props={this.props} />
         </RBSheet>
       </View>
     );

@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useIsFocused, useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,20 +7,27 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Items = props => {
   const {items, branch} = props;
   //const {branch} = props;
-  const [count, setCount] = useState(items.count);
+  const [count, setCount] = useState(0);
   const [isOrder, setIsOrder] = useState(false);
   const [customer, setCustomer] = useState('');
   const [order, setOrder] = useState('');
-  //const [token, setToken] = useState('');
-  const token = 'AAAA-BBBB-CCCC-DDDD';
+  const [token, setToken] = useState('');
+  //const token = 'AAAA-BBBB-CCCC-DDDD';
 
   const url =
     Platform.OS === 'ios' ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
+  useEffect(() => {
+    getOrder();
+    getCart();
+    return () => console.log('unmounting...');
+  }, []);
   useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
       getData();
+      //deleteCart();
       getOrder();
+      getCart();
       console.log('Focused');
       //console.log(AsyncStorage.getItem('customer'));
 
@@ -35,7 +42,9 @@ const Items = props => {
     try {
       const jsonValue = JSON.stringify(value);
       await AsyncStorage.setItem('order', jsonValue);
+      setIsOrder(true);
     } catch (e) {
+      setIsOrder(false);
       // saving error
     }
   };
@@ -43,8 +52,18 @@ const Items = props => {
   const deleteOrder = async () => {
     try {
       //const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem('order', null);
+      await AsyncStorage.removeItem('order');
       setIsOrder(false);
+    } catch (e) {
+      // saving error
+    }
+  };
+
+  const deleteCart = async () => {
+    try {
+      //const jsonValue = JSON.stringify(value);
+      await AsyncStorage.removeItem('cart');
+      //setIsOrder(false);
     } catch (e) {
       // saving error
     }
@@ -53,7 +72,7 @@ const Items = props => {
   const addCart = async value => {
     try {
       const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem(items.id, jsonValue);
+      await AsyncStorage.setItem('cart', jsonValue);
     } catch (e) {
       // saving error
     }
@@ -61,10 +80,113 @@ const Items = props => {
 
   const getCart = async () => {
     try {
-      const value = await AsyncStorage.getItem(items.id);
-      console.log(value);
+      const value = await AsyncStorage.getItem('cart');
+      //console.log(value);
       if (value !== null) {
         let data = JSON.parse(value);
+        let c = 0;
+        data.forEach(element => {
+          if (items.id === element.item) {
+            c =
+              element.cart[0].count +
+              element.cart[1].count +
+              element.cart[2].count;
+          } else {
+          }
+        });
+        setCount(c);
+        // value previously stored
+      } else {
+        setCount(0);
+      }
+    } catch (e) {
+      //return false;
+      // error reading value
+    }
+  };
+
+  const addCounter = async () => {
+    try {
+      const value = await AsyncStorage.getItem('cart');
+      //console.log(value);
+      if (value !== null) {
+        let data = JSON.parse(value);
+        //console.log(data);
+        let c = 0;
+        data.map((element, i) => {
+          if (items.id === element.item) {
+            data[i].cart[0].count = element.cart[0].count + 1;
+            c =
+              element.cart[0].count +
+              element.cart[1].count +
+              element.cart[2].count;
+          } else {
+          }
+          //console.log(data[i].cart);
+        });
+        setCount(c);
+        if (c === 0) {
+          let save = {
+            item: items.id,
+            cart: [
+              {count: 1, size: 'standard'},
+              {count: 0, size: 'small'},
+              {count: 0, size: 'large'},
+            ],
+          };
+          data.push(save);
+          //console.log(data);
+          setCount(1);
+        }
+        deleteCart();
+        addCart(data);
+        // value previously stored
+      } else {
+        let save = [
+          {
+            item: items.id,
+            cart: [
+              {count: 1, size: 'standard'},
+              {count: 0, size: 'small'},
+              {count: 0, size: 'large'},
+            ],
+          },
+        ];
+        addCart(save);
+        setCount(1);
+      }
+    } catch (e) {
+      //return false;
+      // error reading value
+    }
+  };
+
+  const subtractCounter = async () => {
+    try {
+      const value = await AsyncStorage.getItem('cart');
+      //console.log(value);
+      if (value !== null) {
+        let data = JSON.parse(value);
+        //console.log(data);
+        let c = 0;
+        let arr = [];
+        data.map((element, i) => {
+          if (items.id === element.item) {
+            data[i].cart[0].count = element.cart[0].count - 1;
+            c =
+              element.cart[0].count +
+              element.cart[1].count +
+              element.cart[2].count;
+            if (c !== 0) {
+              arr.push(element);
+            }
+          } else {
+            arr.push(element);
+          }
+        });
+        setCount(c);
+        deleteCart();
+        addCart(arr);
         // value previously stored
       } else {
       }
@@ -77,14 +199,10 @@ const Items = props => {
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem('customer');
-      console.log(value);
       if (value !== null) {
         let data = JSON.parse(value);
-        console.log(data);
         setCustomer(data.cust.id);
-        //setToken(data.token);
-        //return value;
-        // value previously stored
+        setToken(data.accessToken);
       } else {
       }
     } catch (e) {
@@ -96,7 +214,7 @@ const Items = props => {
   const getOrder = async () => {
     try {
       const value = await AsyncStorage.getItem('order');
-      console.log(value);
+      //console.log(value);
       if (value !== null) {
         setIsOrder(true);
         let o = JSON.parse(value);
@@ -112,114 +230,74 @@ const Items = props => {
   };
 
   function addCount() {
-    deleteOrder();
-
-    setTimeout(() => {
-      getData();
-    }, 1000);
-
-    if (isOrder) {
-      console.log('order created');
-      //update cart item in db and async storage and count
-    } else {
-      console.log('creating order');
-      //create order add item in cart with status cart
-      let order1 = {
-        type: 'Delivery',
-        date: Date(),
-        branch: branch,
-        customer: customer,
-        location: '',
-        instructions: '',
-        status: 'cart',
-      };
-      console.log(order1);
-      fetch(`${url}/add/order/customer`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(order1),
-      })
-        .then(async resp => {
-          try {
-            const jsonResp = await resp.json();
-            if (resp.status !== 200) {
-              console.log(jsonResp);
-              Alert.alert('Error', 'Unable to perform action', [
-                {
-                  text: 'Cancel',
-                  onPress: () => console.log('Cancel Pressed'),
-                  style: 'cancel',
-                },
-                {
-                  text: 'OK',
-                  onPress: () => console.log('OK Pressed'),
-                },
-              ]);
-            } else {
-              //newOrder(jsonResp);
-              // console.log('order created');
-              // let cart = {
-              //   item: {
-              //     id: items.id,
-              //     quantity: 1,
-              //     size: 'Standard',
-              //   },
-              //   customer: customer,
-              //   order: jsonResp.id,
-              // };
-
-              // fetch(`${url}/add/cart`, {
-              //   method: 'POST',
-              //   headers: {
-              //     'Content-Type': 'application/json',
-              //     Authorization: `Bearer ${token}`,
-              //   },
-              //   body: JSON.stringify(cart),
-              // })
-              //   .then(async res => {
-              //     try {
-              //       const jsonRes = await res.json();
-              //       if (res.status !== 200) {
-              //         console.log(jsonRes);
-              //         Alert.alert('Error', 'Unable to Add to Cart', [
-              //           {
-              //             text: 'Cancel',
-              //             onPress: () => console.log('Cancel Pressed'),
-              //             style: 'cancel',
-              //           },
-              //           {
-              //             text: 'OK',
-              //             onPress: () => console.log('OK Pressed'),
-              //           },
-              //         ]);
-              //       } else {
-              //         //newOrder(jsonRes);
-              //         //addItem({count: 1, size: standard});
-              //         setCount(count + 1);
-              //         addCart(jsonRes.id);
-              //         console.log(jsonRes);
-              //       }
-              //     } catch (err) {
-              //       console.log(err);
-              //     }
-              //   })
-              //   .catch(err => {
-              //     console.log(err);
-              //   });
-
-              console.log(jsonResp);
-            }
-          } catch (err) {
-            console.log(err);
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    }
+    // if (isOrder) {
+    //   console.log('order already created ');
+    //   setTimeout(() => {
+    addCounter();
+    //   }, 1000);
+    // } else {
+    //   console.log('creating order');
+    //   let order1 = {
+    //     type: 'Delivery',
+    //     date: Date(),
+    //     branch: branch.branchId,
+    //     customer: customer,
+    //     location: 'heres location',
+    //     instructions: '',
+    //     status: 'cart',
+    //   };
+    //   //console.log(order1);
+    //   fetch(`${url}/add/order/customer`, {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       //Authorization: `Bearer ${token}`,
+    //     },
+    //     body: JSON.stringify(order1),
+    //   })
+    //     .then(async resp => {
+    //       try {
+    //         const jsonResp = await resp.json();
+    //         if (resp.status !== 200) {
+    //           //console.log(jsonResp);
+    //           console.log('order created error');
+    //           Alert.alert('Error', 'Unable to perform action', [
+    //             {
+    //               text: 'Cancel',
+    //               onPress: () => console.log('Cancel Pressed'),
+    //               style: 'cancel',
+    //             },
+    //             {
+    //               text: 'OK',
+    //               onPress: () => console.log('OK Pressed'),
+    //             },
+    //           ]);
+    //         } else {
+    //           console.log(jsonResp);
+    //           console.log('order created');
+    //           let save = [
+    //             {
+    //               item: items.id,
+    //               cart: [
+    //                 {count: 1, size: 'standard'},
+    //                 {count: 0, size: 'small'},
+    //                 {count: 0, size: 'large'},
+    //               ],
+    //             },
+    //           ];
+    //           addCart(save);
+    //           setCount(count + 1);
+    //           newOrder(jsonResp);
+    //         }
+    //       } catch (err) {
+    //         console.log(err);
+    //         console.log('order error');
+    //       }
+    //     })
+    //     .catch(err => {
+    //       console.log(err);
+    //     });
+    // }
     // if(count === 0 ){
 
     // }
@@ -233,7 +311,9 @@ const Items = props => {
         {props.bundles ? (
           <View style={{flexDirection: 'row'}}>
             <Text style={styles.bundledText}>AED {items.price}</Text>
-            <Text style={styles.bundledPrice}>AED {items.price}</Text>
+            <Text style={styles.bundledPrice}>
+              AED {items.price - (items.price * items.discount) / 100}
+            </Text>
           </View>
         ) : (
           <Text style={styles.price}>AED {items.price}</Text>
@@ -249,7 +329,7 @@ const Items = props => {
           <View style={styles.quantity}>
             <TouchableOpacity
               style={styles.valuesBtn1}
-              onPress={() => setCount(count - 1)}>
+              onPress={() => subtractCounter()}>
               <Icon style={{color: '#742013'}} size={15} name="remove" />
             </TouchableOpacity>
             <View style={styles.numberBox}>
@@ -257,7 +337,7 @@ const Items = props => {
             </View>
             <TouchableOpacity
               style={styles.valuesBtn2}
-              onPress={() => setCount(count + 1)}>
+              onPress={() => addCount()}>
               <Icon style={{color: '#742013'}} size={15} name="add" />
             </TouchableOpacity>
           </View>
@@ -369,3 +449,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
+//export function getTotalItem(){}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,8 +8,149 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Icons from 'react-native-vector-icons/MaterialIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useFocusEffect} from '@react-navigation/native';
 
-const ViewCart = () => {
+const ViewCart = props => {
+  //const {props} = props
+  const [items, setItems] = useState([]);
+  const [instructions, setInstructions] = useState('');
+  const [total, setTotal] = useState(0);
+  const [delivery, setDelivery] = useState(10);
+  const [grandTotal, setGrandTotal] = useState(0);
+  const token = 'AAAA-BBBB-CCCC-DDDD';
+  const url =
+    Platform.OS === 'ios' ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
+  useEffect(() => {
+    setTotal(0);
+    getCart();
+    return () => console.log('unmounting...');
+  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      //setItems([]);
+      console.log(props);
+      setTotal(0);
+      getCart();
+      console.log('Focused');
+      return () => {
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+        console.log('Unfocused');
+      };
+    }, []),
+  );
+  const getCart = async () => {
+    let arr = [];
+
+    var numb;
+    var rounded;
+    try {
+      const value = await AsyncStorage.getItem('cart');
+      //console.log(value);
+      if (value !== null) {
+        let data = JSON.parse(value);
+        //console.log(data);
+        setTotal(0);
+        //total = 0;
+        const promise = data.map(element => {
+          fetch(`${url}/get/menu/items/${element.item}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          })
+            .then(async res => {
+              try {
+                let itemList;
+                const jsonRes = await res.json();
+                if (res.status === 200) {
+                  //console.log(jsonRes);
+                  if (element.cart[0].count > 0) {
+                    itemList = {
+                      id: jsonRes.id,
+                      name: jsonRes.name,
+                      price: jsonRes.price,
+                      discount: jsonRes.discount,
+                      size: 'standard',
+                      quantity: element.cart[0].count,
+                    };
+                    arr.push(itemList);
+                    numb =
+                      total +
+                      (itemList.price -
+                        (itemList.price * itemList.discount) / 100) *
+                        itemList.quantity;
+                    rounded = Math.round((numb + Number.EPSILON) * 100) / 100;
+                    setTotal(rounded);
+                    //console.log(arr);
+                  }
+                  if (element.cart[1].count > 0) {
+                    itemList = {
+                      id: jsonRes.id,
+                      name: jsonRes.name,
+                      price: jsonRes.custom.small,
+                      discount: jsonRes.discount,
+                      size: 'small',
+                      quantity: element.cart[1].count,
+                    };
+                    arr.push(itemList);
+                    numb =
+                      total +
+                      (itemList.price -
+                        (itemList.price * itemList.discount) / 100) *
+                        itemList.quantity;
+                    rounded = Math.round((numb + Number.EPSILON) * 100) / 100;
+                    setTotal(rounded);
+                  }
+                  if (element.cart[2].count > 0) {
+                    itemList = {
+                      id: jsonRes.id,
+                      name: jsonRes.name,
+                      price: jsonRes.custom.large,
+                      discount: jsonRes.discount,
+                      size: 'large',
+                      quantity: element.cart[2].count,
+                    };
+                    arr.push(itemList);
+
+                    numb =
+                      total +
+                      (itemList.price -
+                        (itemList.price * itemList.discount) / 100) *
+                        itemList.quantity;
+                    rounded = Math.round((numb + Number.EPSILON) * 100) / 100;
+                    setTotal(rounded);
+                  }
+                  //console.log(items);
+                }
+              } catch (err) {
+                console.log(err);
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        });
+        setTimeout(() => {
+          Promise.all(promise).then(function () {
+            setItems(arr);
+            console.log(items);
+            //setProm(prom);
+          });
+        }, 1000);
+
+        //return data.length;
+        // value previously stored
+      } else {
+      }
+    } catch (e) {
+      //return false;
+      // error reading value
+    }
+  };
   return (
     <View style={{flex: 1}}>
       <View style={styles.heading}>
@@ -19,7 +160,7 @@ const ViewCart = () => {
             <Text> </Text>
             <Text style={styles.locText}> Your location here</Text>
           </Icon>
-          <Text style={styles.locText}>Add</Text>
+          {/* <Text style={styles.locText}>Add</Text> */}
         </View>
       </View>
       <View style={styles.arrival}>
@@ -33,34 +174,43 @@ const ViewCart = () => {
       </View>
 
       <View>
-        <View style={styles.itemsCart}>
-          <View style={{flexDirection: 'row'}}>
-            <Icon style={{color: '#742013'}} size={12} name="dot-circle" />
-            <View>
-              <View style={{flexDirection: 'row'}}>
-                <Text style={styles.items}>Item Name </Text>
-                <Text style={styles.size}>(Standard Size)</Text>
+        {items.map(item => (
+          <View style={styles.itemsCart}>
+            <View style={{flexDirection: 'row'}} key={item.id}>
+              <Icon style={{color: '#742013'}} size={12} name="dot-circle" />
+              <View>
+                <View style={{flexDirection: 'row'}}>
+                  <Text style={styles.items}>{item.name}</Text>
+                  <Text style={styles.size}>({item.size} size)</Text>
+                </View>
+                <Text style={styles.items}>
+                  AED{' '}
+                  {(item.price - (item.price * item.discount) / 100) *
+                    item.quantity}
+                </Text>
               </View>
-              <Text style={styles.items}>Price</Text>
+            </View>
+
+            <View style={styles.quantity}>
+              <TouchableOpacity style={styles.valuesBtn1}>
+                <Icons style={{color: '#742013'}} size={15} name="remove" />
+              </TouchableOpacity>
+              <View style={styles.numberBox}>
+                <Text style={styles.numbers}>{item.quantity}</Text>
+              </View>
+              <TouchableOpacity style={styles.valuesBtn2}>
+                <Icons style={{color: '#742013'}} size={15} name="add" />
+              </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.quantity}>
-            <TouchableOpacity style={styles.valuesBtn1}>
-              <Icons style={{color: '#742013'}} size={15} name="remove" />
-            </TouchableOpacity>
-            <View style={styles.numberBox}>
-              <Text style={styles.numbers}>1</Text>
-            </View>
-            <TouchableOpacity style={styles.valuesBtn2}>
-              <Icons style={{color: '#742013'}} size={15} name="add" />
-            </TouchableOpacity>
-          </View>
-        </View>
+        ))}
       </View>
 
       <View style={styles.inputField}>
         <TextInput
           fontSize={12}
+          defaultValue={instructions}
+          onChangeText={instr => setInstructions(instr)}
           placeholder="Add special instructions (optional)"
         />
       </View>
@@ -72,19 +222,21 @@ const ViewCart = () => {
           <Text style={styles.grandTotal}>Grand Total</Text>
         </View>
         <View>
-          <Text style={styles.itemTotal}>AED 00.00</Text>
-          <Text style={styles.itemDelivery}>AED 00.00</Text>
-          <Text style={styles.grandTotal}>AED 00.00</Text>
+          <Text style={styles.itemTotal}>AED {total}</Text>
+          <Text style={styles.itemDelivery}>AED {delivery}</Text>
+          <Text style={styles.grandTotal}>AED {total + delivery}</Text>
         </View>
       </View>
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => props.props.navigation.navigate('Payment')}>
         <Text style={styles.locText}>Choose Payment Method</Text>
       </TouchableOpacity>
     </View>
   );
 };
-
+//onPress={props.navigation.navigate('Payment')}
 export default ViewCart;
 
 const styles = StyleSheet.create({
@@ -119,7 +271,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
   },
   numberBox: {
-    width: 23,
+    width: 24,
     height: 25,
     justifyContent: 'center',
     alignItems: 'center',
@@ -131,7 +283,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
   valuesBtn1: {
-    height: 25,
+    height: 24,
     width: 23,
     justifyContent: 'center',
     alignItems: 'center',

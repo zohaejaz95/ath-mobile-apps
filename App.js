@@ -20,6 +20,7 @@ import Orders from './components/orders/Orders';
 import OrderDetails from './components/orders/OrderDetails';
 import ViewProfile from './components/profile/ViewProfile';
 import EditProfile from './components/profile/EditProfile';
+import Payment from './components/cart/Payment';
 
 const Stack = createNativeStackNavigator();
 export class App extends Component {
@@ -110,6 +111,11 @@ export class App extends Component {
             <Stack.Screen
               name="EditProfile"
               component={EditProfile}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Payment"
+              component={Payment}
               options={{headerShown: false}}
             />
           </Stack.Navigator>

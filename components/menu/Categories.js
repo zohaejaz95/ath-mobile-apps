@@ -21,12 +21,13 @@ export class Categories extends Component {
     super(props);
     this.state = {
       branchId: props.route.params.branchId,
+      type: props.route.params.type,
       categories: [],
     };
   }
   componentDidMount() {
     let arr = [];
-    console.log(this.props.route.params.branchId);
+    console.log(this.props.route.params.type);
     fetch(`${url}/get/category/branch/${this.props.route.params.branchId}`, {
       method: 'GET',
       headers: {
@@ -74,6 +75,7 @@ export class Categories extends Component {
                   category: category.id,
                   categoryName: category.name,
                   branchId: this.state.branchId,
+                  type: this.state.type,
                 })
               }>
               <Image

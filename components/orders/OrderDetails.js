@@ -1,12 +1,91 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import BackNav from '../BackNav';
 import Ratings from './Ratings';
 import detailStyles from '../styles/detailStyles';
+import {useFocusEffect} from '@react-navigation/native';
 
 const OrderDetails = props => {
+  const {order, payment, items} = props.route.params;
+  const [orderDate, setOrderDate] = useState(Date());
+  const [token, setToken] = useState('');
+  const [branch, setBranch] = useState([]);
+  const url =
+    Platform.OS === 'ios' ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getData();
+      //console.log(order, payment, items);
+      let d = new Date(order.time);
+      let fullDate = d.getDate() + '/' + d.getMonth() + '/' + d.getFullYear();
+      setOrderDate(fullDate);
+      getBranchDetails();
+      console.log('Focused');
+      return () => {
+        console.log('Unfocused');
+      };
+    }, []),
+  );
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('customer');
+      //console.log(value);
+      if (value !== null) {
+        let data = JSON.parse(value);
+        setToken(data.accessToken);
+        //return value;
+        // value previously stored
+      } else {
+      }
+    } catch (e) {
+      //return false;
+      // error reading value
+    }
+  };
+
+  const getBranchDetails = () => {
+    //console.log(token);
+    fetch(`${url}/get/branches/${order.branch}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(async resp => {
+        try {
+          const jsonResp = await resp.json();
+          if (resp.status !== 200) {
+            //console.log(jsonResp);
+            console.log('Order could not be placed!');
+            Alert.alert('Error', 'Data could not be fetched!', [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              {
+                text: 'OK',
+                onPress: () => console.log('OK Pressed'),
+              },
+            ]);
+          } else {
+            console.log(jsonResp);
+            setBranch(jsonResp);
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   return (
     <View style={styles.box}>
       <BackNav
@@ -19,10 +98,10 @@ const OrderDetails = props => {
           <View style={styles.mainRow}>
             <Icon name="delivery-dining" size={20} />
             <View style={{width: '100%'}}>
-              <Text style={detailStyles.delivery}>Delivery</Text>
+              <Text style={detailStyles.delivery}>{order.type}</Text>
               <View style={styles.rows}>
-                <Text style={detailStyles.date}>Date</Text>
-                <Text style={detailStyles.orderNum}>Order Number</Text>
+                <Text style={detailStyles.date}>{orderDate}</Text>
+                <Text style={detailStyles.orderNum}>{order.orderNumber}</Text>
               </View>
             </View>
           </View>
@@ -30,42 +109,44 @@ const OrderDetails = props => {
         <View style={styles.boxesRow}>
           <View style={styles.rows}>
             <Text style={detailStyles.bill}>Total Bill Value</Text>
-            <Text style={detailStyles.bill}>AED 00.00</Text>
+            <Text style={detailStyles.bill}>AED {payment.totalBill}</Text>
           </View>
         </View>
 
         <View style={styles.boxesRow} height={60}>
           <View style={styles.rows}>
             <Text style={detailStyles.headings}>Product Redeemed Value</Text>
-            <Text style={detailStyles.prices}>AED 00.00</Text>
+            <Text style={detailStyles.prices}>AED {payment.redeem}</Text>
           </View>
           <View style={styles.rows}>
             <Text style={detailStyles.headings}>Offer Availed</Text>
-            <Text style={detailStyles.prices}>AED 00.00</Text>
+            <Text style={detailStyles.prices}>AED {payment.offer}</Text>
           </View>
         </View>
 
         <View style={styles.boxesRow} height={60}>
           <View style={styles.rows}>
             <Text style={detailStyles.headings}>Card Payment</Text>
-            <Text style={detailStyles.prices}>AED 00.00</Text>
+            <Text style={detailStyles.prices}>
+              AED {payment.method === 'card' ? payment.netAmount : '00.00'}
+            </Text>
           </View>
           <View style={styles.rows}>
             <Text style={detailStyles.headings}>Points Worth Redeemed</Text>
-            <Text style={detailStyles.prices}>AED 00.00</Text>
+            <Text style={detailStyles.prices}>AED {payment.totalPoints}</Text>
           </View>
         </View>
         <View style={styles.boxesRow}>
           <View style={styles.rows}>
             <Text style={detailStyles.net}>Net Amount Paid</Text>
-            <Text style={detailStyles.net}>AED 00.00</Text>
+            <Text style={detailStyles.net}>AED {payment.netAmount}</Text>
           </View>
         </View>
         <View style={styles.boxesRow}>
           <View style={styles.order}>
-            <Text style={detailStyles.delivery}>Order Type(Dine In)</Text>
-            <Text style={detailStyles.headings}>Branch Name,</Text>
-            <Text style={detailStyles.headings}>Floor</Text>
+            <Text style={detailStyles.delivery}>Order Type({order.type})</Text>
+            <Text style={detailStyles.headings}>{branch.name},</Text>
+            <Text style={detailStyles.headings}>Floor {branch.floor}</Text>
           </View>
         </View>
       </View>

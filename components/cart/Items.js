@@ -17,16 +17,14 @@ const Items = props => {
   const url =
     Platform.OS === 'ios' ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
   useEffect(() => {
-    getOrder();
     getCart();
     return () => console.log('unmounting...');
   }, []);
   useFocusEffect(
     React.useCallback(() => {
+      console.log(props.branch);
       // Do something when the screen is focused
       getData();
-      //deleteCart();
-      getOrder();
       getCart();
       console.log('Focused');
       //console.log(AsyncStorage.getItem('customer'));
@@ -38,26 +36,6 @@ const Items = props => {
       };
     }, []),
   );
-  const newOrder = async value => {
-    try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem('order', jsonValue);
-      setIsOrder(true);
-    } catch (e) {
-      setIsOrder(false);
-      // saving error
-    }
-  };
-
-  const deleteOrder = async () => {
-    try {
-      //const jsonValue = JSON.stringify(value);
-      await AsyncStorage.removeItem('order');
-      setIsOrder(false);
-    } catch (e) {
-      // saving error
-    }
-  };
 
   const deleteCart = async () => {
     try {
@@ -229,80 +207,6 @@ const Items = props => {
     }
   };
 
-  function addCount() {
-    // if (isOrder) {
-    //   console.log('order already created ');
-    //   setTimeout(() => {
-    addCounter();
-    //   }, 1000);
-    // } else {
-    //   console.log('creating order');
-    //   let order1 = {
-    //     type: 'Delivery',
-    //     date: Date(),
-    //     branch: branch.branchId,
-    //     customer: customer,
-    //     location: 'heres location',
-    //     instructions: '',
-    //     status: 'cart',
-    //   };
-    //   //console.log(order1);
-    //   fetch(`${url}/add/order/customer`, {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       //Authorization: `Bearer ${token}`,
-    //     },
-    //     body: JSON.stringify(order1),
-    //   })
-    //     .then(async resp => {
-    //       try {
-    //         const jsonResp = await resp.json();
-    //         if (resp.status !== 200) {
-    //           //console.log(jsonResp);
-    //           console.log('order created error');
-    //           Alert.alert('Error', 'Unable to perform action', [
-    //             {
-    //               text: 'Cancel',
-    //               onPress: () => console.log('Cancel Pressed'),
-    //               style: 'cancel',
-    //             },
-    //             {
-    //               text: 'OK',
-    //               onPress: () => console.log('OK Pressed'),
-    //             },
-    //           ]);
-    //         } else {
-    //           console.log(jsonResp);
-    //           console.log('order created');
-    //           let save = [
-    //             {
-    //               item: items.id,
-    //               cart: [
-    //                 {count: 1, size: 'standard'},
-    //                 {count: 0, size: 'small'},
-    //                 {count: 0, size: 'large'},
-    //               ],
-    //             },
-    //           ];
-    //           addCart(save);
-    //           setCount(count + 1);
-    //           newOrder(jsonResp);
-    //         }
-    //       } catch (err) {
-    //         console.log(err);
-    //         console.log('order error');
-    //       }
-    //     })
-    //     .catch(err => {
-    //       console.log(err);
-    //     });
-    // }
-    // if(count === 0 ){
-
-    // }
-  }
-
   return (
     <View style={styles.stores}>
       <Image source={{uri: items.image}} style={styles.images} />
@@ -322,7 +226,9 @@ const Items = props => {
       </View>
       <View style={styles.cart}>
         {count === 0 ? (
-          <TouchableOpacity style={styles.iconStyle} onPress={() => addCount()}>
+          <TouchableOpacity
+            style={styles.iconStyle}
+            onPress={() => addCounter()}>
             <Icon color={'#742013'} name="add" size={20} />
           </TouchableOpacity>
         ) : (
@@ -337,7 +243,7 @@ const Items = props => {
             </View>
             <TouchableOpacity
               style={styles.valuesBtn2}
-              onPress={() => addCount()}>
+              onPress={() => addCounter()}>
               <Icon style={{color: '#742013'}} size={15} name="add" />
             </TouchableOpacity>
           </View>

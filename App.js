@@ -21,6 +21,7 @@ import OrderDetails from './components/orders/OrderDetails';
 import ViewProfile from './components/profile/ViewProfile';
 import EditProfile from './components/profile/EditProfile';
 import Payment from './components/cart/Payment';
+import GoogleMap from './components/GoogleMap';
 
 const Stack = createNativeStackNavigator();
 export class App extends Component {
@@ -116,6 +117,11 @@ export class App extends Component {
             <Stack.Screen
               name="Payment"
               component={Payment}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="GoogleMap"
+              component={GoogleMap}
               options={{headerShown: false}}
             />
           </Stack.Navigator>

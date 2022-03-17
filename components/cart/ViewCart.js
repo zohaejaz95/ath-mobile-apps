@@ -17,20 +17,23 @@ const ViewCart = props => {
   const [instructions, setInstructions] = useState('');
   const [total, setTotal] = useState(0);
   const [delivery, setDelivery] = useState(10);
-  const [grandTotal, setGrandTotal] = useState(0);
+  const [totalPoints, setTotalPoints] = useState(0);
+  const [data] = useState(props.props.route.params);
+  const [customer, setCustomer] = useState([]);
   const token = 'AAAA-BBBB-CCCC-DDDD';
   const url =
     Platform.OS === 'ios' ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
   useEffect(() => {
     setTotal(0);
     getCart();
+    getData();
     return () => console.log('unmounting...');
   }, []);
   useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
       //setItems([]);
-      console.log(props);
+      console.log(props.props.route.params.type);
       setTotal(0);
       getCart();
       console.log('Focused');
@@ -41,6 +44,24 @@ const ViewCart = props => {
       };
     }, []),
   );
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('customer');
+      if (value !== null) {
+        let data = JSON.parse(value);
+        //console.log(data);
+        setCustomer(data.cust);
+        //console.log(customer);
+        //return value;
+        // value previously stored
+      }
+    } catch (e) {
+      //return false;
+      // error reading value
+    }
+  };
+
   const getCart = async () => {
     let arr = [];
 
@@ -51,8 +72,8 @@ const ViewCart = props => {
       //console.log(value);
       if (value !== null) {
         let data = JSON.parse(value);
-        //console.log(data);
-        setTotal(0);
+        console.log(data);
+        //setTotal(0);
         //total = 0;
         const promise = data.map(element => {
           fetch(`${url}/get/menu/items/${element.item}`, {
@@ -76,6 +97,7 @@ const ViewCart = props => {
                       discount: jsonRes.discount,
                       size: 'standard',
                       quantity: element.cart[0].count,
+                      points: jsonRes.points,
                     };
                     arr.push(itemList);
                     numb =
@@ -85,6 +107,8 @@ const ViewCart = props => {
                         itemList.quantity;
                     rounded = Math.round((numb + Number.EPSILON) * 100) / 100;
                     setTotal(rounded);
+                    let p = totalPoints + jsonRes.points * itemList.quantity;
+                    setTotalPoints(p);
                     //console.log(arr);
                   }
                   if (element.cart[1].count > 0) {
@@ -95,6 +119,7 @@ const ViewCart = props => {
                       discount: jsonRes.discount,
                       size: 'small',
                       quantity: element.cart[1].count,
+                      points: jsonRes.points,
                     };
                     arr.push(itemList);
                     numb =
@@ -104,6 +129,8 @@ const ViewCart = props => {
                         itemList.quantity;
                     rounded = Math.round((numb + Number.EPSILON) * 100) / 100;
                     setTotal(rounded);
+                    let p = totalPoints + jsonRes.points * itemList.quantity;
+                    setTotalPoints(p);
                   }
                   if (element.cart[2].count > 0) {
                     itemList = {
@@ -113,6 +140,7 @@ const ViewCart = props => {
                       discount: jsonRes.discount,
                       size: 'large',
                       quantity: element.cart[2].count,
+                      points: jsonRes.points,
                     };
                     arr.push(itemList);
 
@@ -123,6 +151,8 @@ const ViewCart = props => {
                         itemList.quantity;
                     rounded = Math.round((numb + Number.EPSILON) * 100) / 100;
                     setTotal(rounded);
+                    let p = totalPoints + jsonRes.points * itemList.quantity;
+                    setTotalPoints(p);
                   }
                   //console.log(items);
                 }
@@ -138,12 +168,8 @@ const ViewCart = props => {
           Promise.all(promise).then(function () {
             setItems(arr);
             console.log(items);
-            //setProm(prom);
           });
         }, 1000);
-
-        //return data.length;
-        // value previously stored
       } else {
       }
     } catch (e) {
@@ -175,8 +201,8 @@ const ViewCart = props => {
 
       <View>
         {items.map(item => (
-          <View style={styles.itemsCart}>
-            <View style={{flexDirection: 'row'}} key={item.id}>
+          <View style={styles.itemsCart} key={item.id}>
+            <View style={{flexDirection: 'row'}}>
               <Icon style={{color: '#742013'}} size={12} name="dot-circle" />
               <View>
                 <View style={{flexDirection: 'row'}}>
@@ -185,8 +211,12 @@ const ViewCart = props => {
                 </View>
                 <Text style={styles.items}>
                   AED{' '}
-                  {(item.price - (item.price * item.discount) / 100) *
-                    item.quantity}
+                  {Math.round(
+                    ((item.price - (item.price * item.discount) / 100) *
+                      item.quantity +
+                      Number.EPSILON) *
+                      100,
+                  ) / 100}
                 </Text>
               </View>
             </View>
@@ -230,7 +260,17 @@ const ViewCart = props => {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => props.props.navigation.navigate('Payment')}>
+        onPress={() =>
+          props.props.navigation.navigate('Payment', {
+            items: items,
+            branch: data,
+            customer: customer,
+            instructions: instructions,
+            total: total,
+            delivery: delivery,
+            totalPoints: totalPoints,
+          })
+        }>
         <Text style={styles.locText}>Choose Payment Method</Text>
       </TouchableOpacity>
     </View>

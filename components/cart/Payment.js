@@ -8,6 +8,23 @@ const Payment = props => {
   const [card, setCard] = useState(false);
   const [points, setPoints] = useState(false);
   const [pay, setPay] = useState(false);
+  const [order, setOrder] = useState('');
+  const [orderData, setOrderData] = useState([]);
+  const [itemsData, setItemsData] = useState([]);
+  const [paymentData, setPaymentData] = useState('');
+  const {customer, branch, items, instructions, total, delivery, totalPoints} =
+    props.route.params;
+  const url =
+    Platform.OS === 'ios' ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
+  const deleteCart = async () => {
+    try {
+      //const jsonValue = JSON.stringify(value);
+      await AsyncStorage.removeItem('cart');
+      //setIsOrder(false);
+    } catch (e) {
+      // saving error
+    }
+  };
   const isCash = () => {
     setCash(true);
     setCard(false);
@@ -25,6 +42,174 @@ const Payment = props => {
     setCard(false);
     setPoints(true);
     setPay('points');
+  };
+  const placeOrder = () => {
+    let orderId;
+    let orderD, itemD;
+    let order1 = {
+      type: branch.type,
+      date: Date(),
+      branch: branch.branchId,
+      customer: customer.id,
+      location: 'heres location',
+      instructions: instructions,
+      status: 'active',
+    };
+    console.log(order1);
+    fetch(`${url}/add/order/customer`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        //Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(order1),
+    })
+      .then(async resp => {
+        try {
+          const jsonResp = await resp.json();
+          if (resp.status !== 200) {
+            //console.log(jsonResp);
+            console.log('order created error');
+            Alert.alert('Error', 'Unable to perform action', [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              {
+                text: 'OK',
+                onPress: () => console.log('OK Pressed'),
+              },
+            ]);
+          } else {
+            console.log(jsonResp);
+            console.log('order created');
+            setOrder(jsonResp.id);
+            orderId = jsonResp.id;
+            orderD = jsonResp;
+            setOrderData(jsonResp);
+            // items to be added in the cart
+            let cart;
+            const promise = items.map((i, j) => {
+              cart = {
+                order: jsonResp.id,
+                customer: customer.id,
+                item: {
+                  id: i.id,
+                  quantity: i.quantity,
+                  size: i.size,
+                },
+              };
+              fetch(`${url}/add/cart`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  //Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(cart),
+              })
+                .then(async res => {
+                  try {
+                    const jsonRes = await res.json();
+                    if (res.status !== 200) {
+                      //console.log(jsonResp);
+                      console.log('Order could not be placed!');
+                      Alert.alert('Error', 'Order could not be placed!', [
+                        {
+                          text: 'Cancel',
+                          onPress: () => console.log('Cancel Pressed'),
+                          style: 'cancel',
+                        },
+                        {
+                          text: 'OK',
+                          onPress: () => console.log('OK Pressed'),
+                        },
+                      ]);
+                    } else {
+                      itemD = jsonRes;
+                      console.log(jsonRes);
+                      setItemsData(jsonRes);
+                      console.log('items added');
+                    }
+                  } catch (err) {
+                    console.log(err);
+                    console.log('items not added! error');
+                  }
+                })
+                .catch(err => {
+                  console.log(err);
+                });
+            });
+            //items added in the cart
+            //after completion payment added
+            setTimeout(() => {
+              Promise.all(promise).then(function () {
+                let paymentData = {
+                  order: orderId,
+                  totalBill: total,
+                  redeem: 0,
+                  offer: 0,
+                  totalPoints: totalPoints,
+                  method: pay,
+                  status: false,
+                  deliveryFee: delivery,
+                  netAmount: total + delivery,
+                };
+                fetch(`${url}/add/payment`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    //Authorization: `Bearer ${token}`,
+                  },
+                  body: JSON.stringify(paymentData),
+                })
+                  .then(async resp => {
+                    try {
+                      const jsonResp = await resp.json();
+                      if (resp.status !== 200) {
+                        //console.log(jsonResp);
+                        console.log('Order could not be placed!');
+                        Alert.alert('Error', 'Order could not be placed!', [
+                          {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel Pressed'),
+                            style: 'cancel',
+                          },
+                          {
+                            text: 'OK',
+                            onPress: () => console.log('OK Pressed'),
+                          },
+                        ]);
+                      } else {
+                        console.log(jsonResp);
+                        setPaymentData(jsonResp);
+                        deleteCart();
+                        console.log('payment');
+                        props.navigation.navigate('OrderDetails', {
+                          order: orderD,
+                          payment: jsonResp,
+                          items: itemD,
+                        });
+                      }
+                    } catch (err) {
+                      console.log(err);
+                      console.log('order error');
+                    }
+                  })
+                  .catch(err => {
+                    console.log(err);
+                  });
+              });
+            }, 1500);
+          }
+        } catch (err) {
+          console.log(err);
+          console.log('order error');
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
@@ -58,7 +243,7 @@ const Payment = props => {
           <Text> Points</Text>
         </View>
       </View>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={() => placeOrder()}>
         <Text style={styles.locText}>Place Order</Text>
       </TouchableOpacity>
     </View>

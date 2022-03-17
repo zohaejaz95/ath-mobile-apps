@@ -1,35 +1,57 @@
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+//import RNGooglePlacePicker from 'react-native-google-place-picker';
+//import LocationReact from './LocationReact';
 
 const BackNav = props => {
   const {navigation} = props;
+  const [location, setLocation] = useState('');
+  const onPress = () => {
+    RNGooglePlacePicker.show(response => {
+      if (response.didCancel) {
+        console.log('User cancelled GooglePlacePicker');
+      } else if (response.error) {
+        console.log('GooglePlacePicker Error: ', response.error);
+      } else {
+        setLocation(response);
+      }
+    });
+  };
+  const IsLogin = (login, text) => {
+    //if login component then true else false
+    if (login) return <Text style={styles.text}>{text}</Text>;
+    else {
+      return (
+        <View>
+          <Text style={styles.loc}>My Location</Text>
+          <Text style={styles.textLoc}>{location}</Text>
+        </View>
+      );
+    }
+  };
   return (
     <View style={styles.header}>
       <TouchableOpacity onPress={() => navigation.navigate('Landing')}>
         <Icon size={30} name="arrow-back" style={styles.icon} />
       </TouchableOpacity>
-      <View style={props.login ? styles.textView : styles.textLocation}>
-        {IsLogin(props.login, props.innerText)}
-      </View>
+      {props.login ? (
+        <View style={styles.textView}>
+          {IsLogin(props.login, props.innerText)}
+        </View>
+      ) : (
+        <TouchableOpacity
+          style={styles.textLocation}
+          //onPress={onPress.bind(this)}
+          onPress={() => navigation.navigate('GoogleMap')}>
+          {IsLogin(props.login, props.innerText)}
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
 
 export default BackNav;
-
-function IsLogin(login, text) {
-  //if login component then true else false
-  if (login) return <Text style={styles.text}>{text}</Text>;
-  else {
-    return (
-      <View>
-        <Text style={styles.loc}>My Location</Text>
-        <Text style={styles.textLoc}>location selector input</Text>
-      </View>
-    );
-  }
-}
 
 const styles = StyleSheet.create({
   header: {

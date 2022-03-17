@@ -23,6 +23,15 @@ const headerConfig = {
     Authorization: `Bearer ${token}`,
   },
 };
+const deleteCart = async () => {
+  try {
+    //const jsonValue = JSON.stringify(value);
+    await AsyncStorage.removeItem('cart');
+    //setIsOrder(false);
+  } catch (e) {
+    // saving error
+  }
+};
 
 export class Branches extends Component {
   constructor(props) {
@@ -34,6 +43,7 @@ export class Branches extends Component {
   }
 
   componentDidMount() {
+    //console.log(this.props.route.params.type)
     let arr = [];
     fetch(`${url}/get/all/branches`, {
       method: 'GET',
@@ -113,6 +123,7 @@ export class Branches extends Component {
                   this.props.navigation.navigate(this.props.route.params.name, {
                     name: 'AddToCart',
                     branchId: branch.id,
+                    type: this.props.route.params.type,
                   })
                 }>
                 <Stores branch={branch} />

@@ -5,14 +5,87 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 //import {Rating} from 'react-native-ratings';
 
 import BackNav from '../BackNav';
+import {useFocusEffect} from '@react-navigation/native';
 //import Ratings from './Ratings';
 
 const Orders = props => {
+  const [token, setToken] = useState('');
+  const [branch, setBranch] = useState([]);
+
+  const url =
+    Platform.OS === 'ios' ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getData();
+      console.log('Focused');
+      return () => {
+        console.log('Unfocused');
+      };
+    }, []),
+  );
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('customer');
+      //console.log(value);
+      if (value !== null) {
+        let data = JSON.parse(value);
+        setToken(data.accessToken);
+        //return value;
+        // value previously stored
+      } else {
+      }
+    } catch (e) {
+      //return false;
+      // error reading value
+    }
+  };
+
+  const getBranchDetails = branchId => {
+    //console.log(token);
+    fetch(`${url}/get/branches/${branchId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(async resp => {
+        try {
+          const jsonResp = await resp.json();
+          if (resp.status !== 200) {
+            //console.log(jsonResp);
+            console.log('Order could not be placed!');
+            Alert.alert('Error', 'Data could not be fetched!', [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              {
+                text: 'OK',
+                onPress: () => console.log('OK Pressed'),
+              },
+            ]);
+          } else {
+            console.log(jsonResp);
+            setBranch(jsonResp);
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   function ratingCompleted(rating) {
     console.log(rating);
   }

@@ -30,6 +30,7 @@
 		A3874EB477874C139F984385 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F42ECCF3BDF747339F607A75 /* Octicons.ttf */; };
 		27C791E5CF4B495DA2D67B58 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F4331214ED56431A9FCFAF81 /* SimpleLineIcons.ttf */; };
 		B6E593C723974A49934AC374 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 651C28DA5E60401CA22F1EC0 /* Zocial.ttf */; };
+		83B765F7DD274813A4749A1D /* libRNGooglePlacePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5ECEC9B3882348B180631182 /* libRNGooglePlacePicker.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,6 +77,8 @@
 		F42ECCF3BDF747339F607A75 /* Octicons.ttf */ = {isa = PBXFileReference; name = "Octicons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		F4331214ED56431A9FCFAF81 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; name = "SimpleLineIcons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		651C28DA5E60401CA22F1EC0 /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D800CCE4DE3B4F31AC8657A9 /* RNGooglePlacePicker.xcodeproj */ = {isa = PBXFileReference; name = "RNGooglePlacePicker.xcodeproj"; path = "../node_modules/react-native-google-place-picker/ios/RNGooglePlacePicker.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		5ECEC9B3882348B180631182 /* libRNGooglePlacePicker.a */ = {isa = PBXFileReference; name = "libRNGooglePlacePicker.a"; path = "libRNGooglePlacePicker.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +95,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1DEB38F6A59AF43B7AC69E4B /* libPods-ATH.a in Frameworks */,
+				83B765F7DD274813A4749A1D /* libRNGooglePlacePicker.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -153,6 +157,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				D800CCE4DE3B4F31AC8657A9 /* RNGooglePlacePicker.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -524,6 +529,14 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ATH.app/ATH";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/..",
+				);
 			};
 			name = Debug;
 		};
@@ -548,6 +561,14 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ATH.app/ATH";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/..",
+				);
 			};
 			name = Release;
 		};
@@ -574,6 +595,10 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/..",
+				);
 			};
 			name = Debug;
 		};
@@ -598,6 +623,10 @@
 				PRODUCT_NAME = ATH;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/..",
+				);
 			};
 			name = Release;
 		};

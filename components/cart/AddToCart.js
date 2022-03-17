@@ -29,9 +29,9 @@ const getCart = async () => {
     if (value !== null) {
       let data = JSON.parse(value);
       length = data.length;
-      data.forEach(element => {
-        console.log(element);
-      });
+      // data.forEach(element => {
+      //   console.log(element);
+      // });
       return data.length;
       // value previously stored
     } else {
@@ -56,6 +56,8 @@ export class AddToCart extends Component {
       },
       totalPrice: '',
       selectedItems: 0,
+      branchId: props.route.params.branchId,
+      type: props.route.params.type,
     };
   }
 
@@ -63,6 +65,7 @@ export class AddToCart extends Component {
     let count = getCart();
     console.log('Count', count);
     let arr = [];
+    console.log(this.state.type);
     //console.log(this.props.route.params.category);
     fetch(`${url}/get/menu/category/${this.props.route.params.category}`, {
       method: 'GET',

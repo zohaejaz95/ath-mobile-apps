@@ -1,7 +1,9 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Alert} from 'react-native';
 import React, {useState} from 'react';
 
 import BackNav from '../BackNav';
+import {useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Payment = props => {
   const [cash, setCash] = useState(false);
@@ -12,19 +14,92 @@ const Payment = props => {
   const [orderData, setOrderData] = useState([]);
   const [itemsData, setItemsData] = useState([]);
   const [paymentData, setPaymentData] = useState('');
+  const [location, setLocation] = useState('');
+  const [rewards, setRewards] = useState(0);
+  const [currency, setCurrency] = useState(0);
+  const [token, setToken] = useState('');
   const {customer, branch, items, instructions, total, delivery, totalPoints} =
     props.route.params;
   const url =
     Platform.OS === 'ios' ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
-  const deleteCart = async () => {
-    try {
-      //const jsonValue = JSON.stringify(value);
-      await AsyncStorage.removeItem('cart');
-      //setIsOrder(false);
-    } catch (e) {
-      // saving error
-    }
-  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      async function fetchSearchLocation() {
+        var location = JSON.parse(await AsyncStorage.getItem('location'));
+        if (location !== null) {
+          setRegion({
+            latitude: location.lat,
+            longitude: location.lng,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          });
+          setLocation(location.location);
+        }
+        // Do something when the screen is focused
+      }
+      // let customer = JSON.parse(AsyncStorage.getItem('customer'));
+      // console.log(AsyncStorage.getItem('customer'));
+      async function getCustomerRewards() {
+        let cust = JSON.parse(await AsyncStorage.getItem('customer'));
+        setToken(cust.accessToken);
+        //console.log(customer);
+        fetch(`${url}/get/customer/${cust.cust.id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then(async res => {
+            try {
+              const jsonRes = await res.json();
+              if (res.status === 200) {
+                console.log(jsonRes);
+                setRewards(jsonRes.rewards);
+              }
+            } catch (err) {
+              console.log(err);
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
+      async function getExportPoints() {
+        fetch(`${url}/get/points`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then(async res => {
+            try {
+              const jsonRes = await res.json();
+              if (res.status === 200) {
+                console.log(jsonRes);
+                setCurrency(jsonRes.currency);
+              }
+            } catch (err) {
+              console.log(err);
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
+
+      fetchSearchLocation();
+      getCustomerRewards();
+      getExportPoints();
+
+      return () => {
+        //AsyncStorage.removeItem('location');
+        // alert('Screen was unfocused');
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+      };
+    }, []),
+  );
   const isCash = () => {
     setCash(true);
     setCard(false);
@@ -43,7 +118,8 @@ const Payment = props => {
     setPoints(true);
     setPay('points');
   };
-  const placeOrder = () => {
+
+  const orderRequests = () => {
     let orderId;
     let orderD, itemD;
     let order1 = {
@@ -51,7 +127,7 @@ const Payment = props => {
       date: Date(),
       branch: branch.branchId,
       customer: customer.id,
-      location: 'heres location',
+      location: location,
       instructions: instructions,
       status: 'active',
     };
@@ -183,7 +259,8 @@ const Payment = props => {
                       } else {
                         console.log(jsonResp);
                         setPaymentData(jsonResp);
-                        deleteCart();
+                        AsyncStorage.removeItem('location');
+                        AsyncStorage.removeItem('cart');
                         console.log('payment');
                         props.navigation.navigate('OrderDetails', {
                           order: orderD,
@@ -210,6 +287,57 @@ const Payment = props => {
       .catch(err => {
         console.log(err);
       });
+  };
+  const placeOrder = () => {
+    let pointsPayable = false;
+
+    if (pay === 'points') {
+      let net = total + delivery;
+      let pointEq = net * currency;
+      if (rewards >= pointEq) {
+        pointsPayable = true;
+        orderRequests();
+        let red = {
+          rewards: rewards - pointEq,
+        };
+        fetch(`${url}/update/customer/rewards/${customer.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(red),
+        })
+          .then(async res => {
+            try {
+              const jsonRes = await res.json();
+              if (res.status === 200) {
+                console.log(jsonRes);
+                //setCurrency(jsonRes.currency);
+              }
+            } catch (err) {
+              console.log(err);
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      } else {
+        Alert.alert('Error', 'You do not have enough reward points!', [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {
+            text: 'OK',
+            onPress: () => console.log('OK Pressed'),
+          },
+        ]);
+      }
+    } else {
+      orderRequests();
+    }
   };
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>

@@ -53,9 +53,8 @@ function GoogleMap({navigation, route}) {
       fetchSearchLocation();
 
       return () => {
-        AsyncStorage.removeItem('location');
+        //AsyncStorage.removeItem('location');
         // alert('Screen was unfocused');
-
         // Do something when the screen is unfocused
         // Useful for cleanup functions
       };

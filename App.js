@@ -22,6 +22,7 @@ import ViewProfile from './components/profile/ViewProfile';
 import EditProfile from './components/profile/EditProfile';
 import Payment from './components/cart/Payment';
 import GoogleMap from './components/GoogleMap';
+import SearchLocationAutocomplete from './components/SearchLocationAutocomplete';
 
 const Stack = createNativeStackNavigator();
 export class App extends Component {
@@ -122,6 +123,11 @@ export class App extends Component {
             <Stack.Screen
               name="GoogleMap"
               component={GoogleMap}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Search Location"
+              component={SearchLocationAutocomplete}
               options={{headerShown: false}}
             />
           </Stack.Navigator>

@@ -144,7 +144,7 @@ export class AddToCart extends Component {
         <View style={styles.bottom}>
           <View style={styles.itemsCart}>
             <Text style={styles.priceColor}>{length} Items Selected</Text>
-            <Text style={styles.selectedColor}>AED 00.00</Text>
+            {/* <Text style={styles.selectedColor}>AED 00.00</Text> */}
           </View>
           <TouchableOpacity
             style={styles.viewCartBtn}

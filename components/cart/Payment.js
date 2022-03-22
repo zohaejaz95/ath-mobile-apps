@@ -16,6 +16,10 @@ const Payment = props => {
     props.route.params;
   const url =
     Platform.OS === 'ios' ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
+  // const paymentByCard= () => {
+
+  // }
+
   const deleteCart = async () => {
     try {
       //const jsonValue = JSON.stringify(value);
@@ -185,11 +189,18 @@ const Payment = props => {
                         setPaymentData(jsonResp);
                         deleteCart();
                         console.log('payment');
-                        props.navigation.navigate('OrderDetails', {
-                          order: orderD,
-                          payment: jsonResp,
-                          items: itemD,
-                        });
+                        if (pay === 'card') {
+                          props.navigation.navigate('Main', {
+                            paymentId: jsonResp.id,
+                            amount: jsonResp.netAmount,
+                          });
+                        } else {
+                          props.navigation.navigate('OrderDetails', {
+                            order: orderD,
+                            payment: jsonResp,
+                            items: itemD,
+                          });
+                        }
                       }
                     } catch (err) {
                       console.log(err);

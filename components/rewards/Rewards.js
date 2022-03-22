@@ -1,57 +1,75 @@
-import {Text, View, ImageBackground, StyleSheet, Image} from 'react-native';
-import React, {Component} from 'react';
+import {
+  Text,
+  View,
+  ImageBackground,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
+import React from 'react';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const boxHeight = 40;
-export class Rewards extends Component {
-  render() {
-    return (
-      <ImageBackground
-        style={styles.background}
-        source={{
-          uri: 'https://images.pexels.com/photos/10803604/pexels-photo-10803604.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
-        }}>
-        <View style={styles.navToggle}>
-          <Icon size={25} style={styles.imageBars} name="bars" />
+const Rewards = props => {
+  const {navigation} = props;
+
+  return (
+    <ImageBackground
+      style={styles.background}
+      source={{
+        uri: 'https://images.pexels.com/photos/10803604/pexels-photo-10803604.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
+      }}>
+      <View style={styles.navToggle}>
+        <Icon size={25} style={styles.imageBars} name="bars" />
+      </View>
+      <View style={{flex: 1}} />
+      <View style={styles.giftOp}>
+        <View style={styles.giftBox}>
+          <Text style={styles.giftText}>
+            You have <Text style={styles.giftPrice}>0.00 AED</Text>
+          </Text>
         </View>
-        <View style={{flex: 1}} />
-        <View style={styles.giftOp}>
-          <View style={styles.giftBox}>
-            <Text style={styles.giftText}>
-              You have <Text style={styles.giftPrice}>0.00 AED</Text> valid
-              until
-            </Text>
-          </View>
+      </View>
+      <View>
+        <View style={styles.giftOptions}>
+          <TouchableOpacity
+            style={styles.optionBox}
+            onPress={() => navigation.navigate('How it works')}>
+            <Text style={styles.giftText}>How It Works</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.optionBox}
+            onPress={() => navigation.navigate('How it works')}>
+            <Text style={styles.giftText}>My Rewards</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.optionBox}
+            onPress={() => navigation.navigate('How it works')}>
+            <Text style={styles.giftText}>Refer a Friend</Text>
+          </TouchableOpacity>
         </View>
-        <View>
-          <View style={styles.giftOptions}>
-            <View style={styles.optionBox}>
-              <Text style={styles.giftText}>How It Works</Text>
-            </View>
-            <View style={styles.optionBox}>
-              <Text style={styles.giftText}>My Rewards</Text>
-            </View>
-            <View style={styles.optionBox}>
-              <Text style={styles.giftText}>Refer a Friend</Text>
-            </View>
-          </View>
-          <View style={styles.giftOptions}>
-            <View style={styles.optionBox}>
-              <Text style={styles.giftText}>Transfer Credit</Text>
-            </View>
-            <View style={styles.optionBox}>
-              <Text style={styles.giftText}>Credits Calculator</Text>
-            </View>
-            <View style={styles.optionBox}>
-              <Text style={styles.giftText}>History</Text>
-            </View>
-          </View>
+        <View style={styles.giftOptions}>
+          <TouchableOpacity
+            style={styles.optionBox}
+            onPress={() => navigation.navigate('Transfer')}>
+            <Text style={styles.giftText}>Transfer Credit</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.optionBox}
+            onPress={() => navigation.navigate('How it works')}>
+            <Text style={styles.giftText}>Credits Calculator</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.optionBox}
+            onPress={() => navigation.navigate('History')}>
+            <Text style={styles.giftText}>History</Text>
+          </TouchableOpacity>
         </View>
-      </ImageBackground>
-    );
-  }
-}
+      </View>
+    </ImageBackground>
+  );
+};
 
 export default Rewards;
 

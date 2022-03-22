@@ -22,6 +22,12 @@ import ViewProfile from './components/profile/ViewProfile';
 import EditProfile from './components/profile/EditProfile';
 import Payment from './components/cart/Payment';
 import GoogleMap from './components/GoogleMap';
+//import StripePayment from './components/cart/StripePayment';
+import SearchLocationAutocomplete from './components/SearchLocationAutocomplete';
+import Main from './components/payment/Main';
+import Working from './components/rewards/Working';
+import History from './components/rewards/History';
+import Transfer from './components/rewards/Transfer';
 
 const Stack = createNativeStackNavigator();
 export class App extends Component {
@@ -122,6 +128,31 @@ export class App extends Component {
             <Stack.Screen
               name="GoogleMap"
               component={GoogleMap}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Main"
+              component={Main}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Search Location"
+              component={SearchLocationAutocomplete}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="How it works"
+              component={Working}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Transfer"
+              component={Transfer}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="History"
+              component={History}
               options={{headerShown: false}}
             />
           </Stack.Navigator>

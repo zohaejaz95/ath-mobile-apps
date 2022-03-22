@@ -77,7 +77,7 @@ const Payment = props => {
               const jsonRes = await res.json();
               if (res.status === 200) {
                 console.log(jsonRes);
-                setCurrency(jsonRes.currency);
+                setCurrency(jsonRes[0].currency);
               }
             } catch (err) {
               console.log(err);

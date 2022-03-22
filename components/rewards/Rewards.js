@@ -1,57 +1,145 @@
-import {Text, View, ImageBackground, StyleSheet, Image} from 'react-native';
-import React, {Component} from 'react';
+import {
+  Text,
+  View,
+  ImageBackground,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
+import React, {useState} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const boxHeight = 40;
-export class Rewards extends Component {
-  render() {
-    return (
-      <ImageBackground
-        style={styles.background}
-        source={{
-          uri: 'https://images.pexels.com/photos/10803604/pexels-photo-10803604.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
-        }}>
-        <View style={styles.navToggle}>
-          <Icon size={25} style={styles.imageBars} name="bars" />
+const Rewards = props => {
+  const {navigation} = props;
+  const [rewards, setRewards] = useState(0);
+  const [currency, setCurrency] = useState(1);
+  const [points, setPoints] = useState(0);
+  const [token, setToken] = useState('');
+  const url =
+    Platform.OS === 'ios' ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
+
+  useFocusEffect(
+    React.useCallback(() => {
+      async function getCustomerRewards() {
+        let cust = JSON.parse(await AsyncStorage.getItem('customer'));
+        if (cust !== null) {
+          setToken(cust.accessToken);
+          fetch(`${url}/get/customer/${cust.cust.id}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+            .then(async res => {
+              try {
+                const jsonRes = await res.json();
+                if (res.status === 200) {
+                  setRewards(jsonRes.rewards);
+                  setPoints(jsonRes.rewards / currency);
+                }
+              } catch (err) {
+                console.log(err);
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        }
+      }
+      async function getExportPoints() {
+        fetch(`${url}/get/points`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then(async res => {
+            try {
+              const jsonResp = await res.json();
+              if (res.status === 200) {
+                setCurrency(jsonResp[0].currency);
+                setPoints(rewards / jsonResp[0].currency);
+              }
+            } catch (err) {
+              console.log(err);
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
+      getCustomerRewards();
+      getExportPoints();
+      setPoints(rewards / currency);
+      //console.log(rewards, currency);
+      return () => {
+        //AsyncStorage.removeItem('location');
+        // alert('Screen was unfocused');
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+      };
+    }, []),
+  );
+  return (
+    <ImageBackground
+      style={styles.background}
+      source={{
+        uri: 'https://images.pexels.com/photos/10803604/pexels-photo-10803604.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
+      }}>
+      <View style={styles.navToggle}>
+        <Icon size={25} style={styles.imageBars} name="bars" />
+      </View>
+      <View style={{flex: 1}} />
+      <View style={styles.giftOp}>
+        <View style={styles.giftBox}>
+          <Text style={styles.giftText}>
+            You have{' '}
+            <Text style={styles.giftPrice}>{rewards / currency} AED</Text>.
+          </Text>
         </View>
-        <View style={{flex: 1}} />
-        <View style={styles.giftOp}>
-          <View style={styles.giftBox}>
-            <Text style={styles.giftText}>
-              You have <Text style={styles.giftPrice}>0.00 AED</Text> valid
-              until
+      </View>
+      <View>
+        <View style={styles.giftOptions}>
+          <TouchableOpacity
+            style={styles.optionBox}
+            onPress={() => navigation.navigate('How it works')}>
+            <Text style={styles.giftText}>How It Works</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.optionBox}>
+            <Text style={styles.giftText}>My Rewards</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.optionBox}>
+            <Text style={styles.giftText}>Refer a Friend</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.giftOptions}>
+          <TouchableOpacity
+            style={styles.optionBox}
+            onPress={() =>
+              navigation.navigate('Transfer', {
+                rewards: rewards,
+              })
+            }>
+            <Text style={styles.giftText}>Transfer Credit</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.optionBox}>
+            <Text style={styles.giftText}>Credits Calculator</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.optionBox}>
+            <Text
+              style={styles.giftText}
+              onPress={() => navigation.navigate('History')}>
+              History
             </Text>
-          </View>
+          </TouchableOpacity>
         </View>
-        <View>
-          <View style={styles.giftOptions}>
-            <View style={styles.optionBox}>
-              <Text style={styles.giftText}>How It Works</Text>
-            </View>
-            <View style={styles.optionBox}>
-              <Text style={styles.giftText}>My Rewards</Text>
-            </View>
-            <View style={styles.optionBox}>
-              <Text style={styles.giftText}>Refer a Friend</Text>
-            </View>
-          </View>
-          <View style={styles.giftOptions}>
-            <View style={styles.optionBox}>
-              <Text style={styles.giftText}>Transfer Credit</Text>
-            </View>
-            <View style={styles.optionBox}>
-              <Text style={styles.giftText}>Credits Calculator</Text>
-            </View>
-            <View style={styles.optionBox}>
-              <Text style={styles.giftText}>History</Text>
-            </View>
-          </View>
-        </View>
-      </ImageBackground>
-    );
-  }
-}
+      </View>
+    </ImageBackground>
+  );
+};
 
 export default Rewards;
 

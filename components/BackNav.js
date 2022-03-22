@@ -7,17 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 const BackNav = props => {
   const {navigation} = props;
   const [location, setLocation] = useState('');
-  const onPress = () => {
-    RNGooglePlacePicker.show(response => {
-      if (response.didCancel) {
-        console.log('User cancelled GooglePlacePicker');
-      } else if (response.error) {
-        console.log('GooglePlacePicker Error: ', response.error);
-      } else {
-        setLocation(response);
-      }
-    });
-  };
+
   const IsLogin = (login, text) => {
     //if login component then true else false
     if (login) return <Text style={styles.text}>{text}</Text>;

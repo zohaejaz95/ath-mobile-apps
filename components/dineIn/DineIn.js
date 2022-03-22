@@ -89,13 +89,6 @@ const DineIn = props => {
   };
 
   const createButtonAlert = () => {
-    console.log(name);
-    console.log(phone);
-    console.log(email);
-    console.log(formattedValue);
-    console.log(time);
-    console.log(seats);
-    console.log(props.route.params.branchId);
     var phoneno = /^\d{10}$/;
     if (name !== '') {
       if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {

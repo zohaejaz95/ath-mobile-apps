@@ -26,6 +26,7 @@ import SearchLocationAutocomplete from './components/SearchLocationAutocomplete'
 import Working from './components/rewards/Working';
 import HistoryCredit from './components/rewards/HistoryCredit';
 import TransferCredit from './components/rewards/TransferCredit';
+import Customization from './components/cart/Customization';
 
 const Stack = createNativeStackNavigator();
 export class App extends Component {
@@ -146,6 +147,11 @@ export class App extends Component {
             <Stack.Screen
               name="History"
               component={HistoryCredit}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Customization"
+              component={Customization}
               options={{headerShown: false}}
             />
           </Stack.Navigator>

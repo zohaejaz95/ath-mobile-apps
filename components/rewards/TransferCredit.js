@@ -11,6 +11,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import PhoneInput from 'react-native-phone-number-input';
 import styles1 from '../styles/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import PopNav from '../PopNav';
 
 const TransferCredit = props => {
   const {navigation} = props;
@@ -220,14 +221,7 @@ const TransferCredit = props => {
 
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.pop()}>
-          <Icon size={30} name="arrow-back" style={styles.icon} />
-        </TouchableOpacity>
-        <View style={styles.textView}>
-          <Text style={styles.text}>Transfer Credit</Text>
-        </View>
-      </View>
+      <PopNav heading="Transfer Credit" navigation={props.navigation} />
       <View style={{padding: 20}}>
         <Text>Credit Points</Text>
         <TextInput
@@ -288,32 +282,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#742013',
   },
-  header: {
-    padding: 5,
-    height: 50,
-    flexDirection: 'row',
-    //backgroundColor: '#D22B2B',
-    backgroundColor: '#742013',
-    alignItems: 'center',
-  },
-  icon: {
-    color: 'white',
-  },
-  text: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 18,
-  },
-  textView: {
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    //left: '40%',
-  },
+
   loc: {
     color: 'white',
     fontSize: 12,

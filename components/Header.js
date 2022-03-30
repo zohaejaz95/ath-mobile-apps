@@ -38,9 +38,9 @@ export default function Header(props) {
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem('customer');
-      console.log(value);
+      //console.log(value);
       if (value !== null) {
-        console.log(value);
+        //console.log(value);
         setLoginButton(false);
         //return value;
         // value previously stored

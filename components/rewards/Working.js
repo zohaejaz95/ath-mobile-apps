@@ -2,6 +2,7 @@ import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useFocusEffect} from '@react-navigation/native';
+import PopNav from '../PopNav';
 
 const Working = props => {
   const {navigation} = props;
@@ -42,14 +43,7 @@ const Working = props => {
   );
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.pop()}>
-          <Icon size={30} name="arrow-back" style={styles.icon} />
-        </TouchableOpacity>
-        <View style={styles.textView}>
-          <Text style={styles.text}>How it Works</Text>
-        </View>
-      </View>
+      <PopNav heading="How it Works" navigation={props.navigation} />
       <View style={{padding: 10}}>
         <Text style={{textAlign: 'justify'}}>{work}</Text>
       </View>

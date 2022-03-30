@@ -136,6 +136,7 @@ export class AddToCart extends Component {
                   items={item}
                   bundles={false}
                   branch={this.props.route.params}
+                  navigation={this.props.navigation}
                 />
               </View>
             ))}

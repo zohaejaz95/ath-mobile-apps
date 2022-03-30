@@ -64,8 +64,10 @@ const ViewCart = props => {
 
   const getCart = async () => {
     let arr = [];
+    let pricesItems = 0;
+    let rewardsPoints = 0;
 
-    var numb;
+    var numb = 0;
     var rounded;
     try {
       const value = await AsyncStorage.getItem('cart');
@@ -88,8 +90,15 @@ const ViewCart = props => {
                 let itemList;
                 const jsonRes = await res.json();
                 if (res.status === 200) {
-                  //console.log(jsonRes);
+                  //console.log(element.cart[0].count);
                   if (element.cart[0].count > 0) {
+                    console.log(element.cart[0].count);
+                    pricesItems =
+                      pricesItems +
+                      (jsonRes.price -
+                        (jsonRes.price * jsonRes.discount) / 100) *
+                        element.cart[0].count;
+
                     itemList = {
                       id: jsonRes.id,
                       name: jsonRes.name,
@@ -100,18 +109,18 @@ const ViewCart = props => {
                       points: jsonRes.points,
                     };
                     arr.push(itemList);
-                    numb =
-                      total +
-                      (itemList.price -
-                        (itemList.price * itemList.discount) / 100) *
-                        itemList.quantity;
-                    rounded = Math.round((numb + Number.EPSILON) * 100) / 100;
-                    setTotal(rounded);
-                    let p = totalPoints + jsonRes.points * itemList.quantity;
-                    setTotalPoints(p);
+                    rewardsPoints =
+                      rewardsPoints + jsonRes.points * element.cart[0].count;
+
                     //console.log(arr);
                   }
                   if (element.cart[1].count > 0) {
+                    console.log(element.cart[1].count);
+                    pricesItems =
+                      pricesItems +
+                      (jsonRes.custom.small -
+                        (jsonRes.custom.small * jsonRes.discount) / 100) *
+                        element.cart[1].count;
                     itemList = {
                       id: jsonRes.id,
                       name: jsonRes.name,
@@ -122,17 +131,16 @@ const ViewCart = props => {
                       points: jsonRes.points,
                     };
                     arr.push(itemList);
-                    numb =
-                      total +
-                      (itemList.price -
-                        (itemList.price * itemList.discount) / 100) *
-                        itemList.quantity;
-                    rounded = Math.round((numb + Number.EPSILON) * 100) / 100;
-                    setTotal(rounded);
-                    let p = totalPoints + jsonRes.points * itemList.quantity;
-                    setTotalPoints(p);
+                    rewardsPoints =
+                      rewardsPoints + jsonRes.points * element.cart[1].count;
                   }
                   if (element.cart[2].count > 0) {
+                    console.log(element.cart[2].count);
+                    pricesItems =
+                      pricesItems +
+                      (jsonRes.custom.large -
+                        (jsonRes.custom.large * jsonRes.discount) / 100) *
+                        element.cart[2].count;
                     itemList = {
                       id: jsonRes.id,
                       name: jsonRes.name,
@@ -143,18 +151,10 @@ const ViewCart = props => {
                       points: jsonRes.points,
                     };
                     arr.push(itemList);
-
-                    numb =
-                      total +
-                      (itemList.price -
-                        (itemList.price * itemList.discount) / 100) *
-                        itemList.quantity;
-                    rounded = Math.round((numb + Number.EPSILON) * 100) / 100;
-                    setTotal(rounded);
-                    let p = totalPoints + jsonRes.points * itemList.quantity;
-                    setTotalPoints(p);
+                    rewardsPoints =
+                      rewardsPoints + jsonRes.points * element.cart[2].count;
                   }
-                  //console.log(items);
+                  console.log(items);
                 }
               } catch (err) {
                 console.log(err);
@@ -168,6 +168,11 @@ const ViewCart = props => {
           Promise.all(promise).then(function () {
             setItems(arr);
             console.log(items);
+            pricesItems =
+              Math.round((pricesItems + Number.EPSILON) * 100) / 100;
+            console.log(pricesItems);
+            setTotal(pricesItems);
+            setTotalPoints(rewardsPoints);
           });
         }, 1000);
       } else {
@@ -200,8 +205,8 @@ const ViewCart = props => {
       </View>
 
       <View>
-        {items.map(item => (
-          <View style={styles.itemsCart} key={item.id}>
+        {items.map((item, index) => (
+          <View style={styles.itemsCart} key={index}>
             <View style={{flexDirection: 'row'}}>
               <Icon style={{color: '#742013'}} size={12} name="dot-circle" />
               <View>

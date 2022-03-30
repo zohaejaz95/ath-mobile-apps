@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useFocusEffect} from '@react-navigation/native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import PopNav from '../PopNav';
 
 const HistoryCredit = props => {
   const {navigation} = props;
@@ -105,14 +106,7 @@ const HistoryCredit = props => {
   );
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.pop()}>
-          <Icon size={30} name="arrow-back" style={styles.icon} />
-        </TouchableOpacity>
-        <View style={styles.textView}>
-          <Text style={styles.text}>History</Text>
-        </View>
-      </View>
+      <PopNav heading="History" navigation={props.navigation} />
       <View style={{padding: 20}}>
         <FlatList
           data={sent}

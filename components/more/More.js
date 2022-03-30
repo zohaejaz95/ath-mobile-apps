@@ -63,6 +63,7 @@ const More = props => {
     }
   };
   function logout() {
+    AsyncStorage.removeItem('customer');
     removeData();
     setLog(false);
   }

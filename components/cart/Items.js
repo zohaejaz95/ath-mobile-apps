@@ -5,7 +5,7 @@ import {useIsFocused, useFocusEffect} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Items = props => {
-  const {items, branch} = props;
+  const {items, branch, navigation} = props;
   //const {branch} = props;
   const [count, setCount] = useState(0);
   const [isOrder, setIsOrder] = useState(false);
@@ -24,6 +24,7 @@ const Items = props => {
     React.useCallback(() => {
       console.log(props.branch);
       // Do something when the screen is focused
+      //deleteCart();
       getData();
       getCart();
       console.log('Focused');
@@ -248,8 +249,15 @@ const Items = props => {
             </TouchableOpacity>
           </View>
         )}
-
-        <Text style={styles.cust}>Customizable</Text>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('Customization', {
+              items: items,
+              count: count,
+            })
+          }>
+          <Text style={styles.cust}>Customizable</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

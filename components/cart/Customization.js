@@ -90,13 +90,10 @@ const Customization = props => {
 
   const addCounter = async size => {
     try {
-      console.log(items);
-      console.log(size);
       const value = await AsyncStorage.getItem('cart');
       //console.log(value);
       if (value !== null) {
         let data = JSON.parse(value);
-        console.log(data);
         let c = 0;
         data.map((element, i) => {
           if (items.id === element.item) {
@@ -123,13 +120,6 @@ const Customization = props => {
           setLarge(large + 1);
         }
         if (c === 0) {
-          //   if (size === 'standard') {
-          //     setStandard(1);
-          //   } else if (size === 'small') {
-          //     setSmall(1);
-          //   } else {
-          //     setLarge(1);
-          //   }
           let save = {
             item: items.id,
             cart: [
@@ -217,11 +207,6 @@ const Customization = props => {
   //View
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
-      {/* <BackNav
-        login={true}
-        navigation={props.navigation}
-        innerText="Customization"
-      /> */}
       <PopNav heading="Customization" navigation={props.navigation} />
       <View style={{margin: 20}}>
         <Text

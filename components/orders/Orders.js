@@ -11,11 +11,14 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import BackNav from '../BackNav';
 import {useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 //import Ratings from './Ratings';
 
 const Orders = props => {
   const [token, setToken] = useState('');
   const [branch, setBranch] = useState([]);
+  const [customer, setCustomer] = useState([]);
+  const [orders, setOrders] = useState([]);
 
   const url =
     Platform.OS === 'ios' ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
@@ -23,6 +26,7 @@ const Orders = props => {
   useFocusEffect(
     React.useCallback(() => {
       getData();
+      getAllOrders();
       console.log('Focused');
       return () => {
         console.log('Unfocused');
@@ -33,12 +37,10 @@ const Orders = props => {
   const getData = async () => {
     try {
       const value = await AsyncStorage.getItem('customer');
-      //console.log(value);
       if (value !== null) {
         let data = JSON.parse(value);
         setToken(data.accessToken);
-        //return value;
-        // value previously stored
+        setCustomer(data.cust);
       } else {
       }
     } catch (e) {
@@ -47,9 +49,9 @@ const Orders = props => {
     }
   };
 
-  const getBranchDetails = branchId => {
-    //console.log(token);
-    fetch(`${url}/get/branches/${branchId}`, {
+  const getAllOrders = async () => {
+    let custom = JSON.parse(await AsyncStorage.getItem('customer'));
+    fetch(`${url}/get/order/customer/${custom.cust.id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -60,7 +62,40 @@ const Orders = props => {
         try {
           const jsonResp = await resp.json();
           if (resp.status !== 200) {
-            //console.log(jsonResp);
+            Alert.alert('Error', 'Data could not be fetched!', [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel',
+              },
+              {
+                text: 'OK',
+                onPress: () => console.log('OK Pressed'),
+              },
+            ]);
+          } else {
+            setOrders(jsonResp);
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+  const getPayments = order => {
+    fetch(`${url}/get/payment/order/${order.id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(async resp => {
+        try {
+          const jsonResp = await resp.json();
+          if (resp.status !== 200) {
             console.log('Order could not be placed!');
             Alert.alert('Error', 'Data could not be fetched!', [
               {
@@ -74,8 +109,10 @@ const Orders = props => {
               },
             ]);
           } else {
-            console.log(jsonResp);
-            setBranch(jsonResp);
+            props.navigation.navigate('OrderDetails', {
+              order: order,
+              payment: jsonResp,
+            });
           }
         } catch (err) {
           console.log(err);
@@ -85,10 +122,6 @@ const Orders = props => {
         console.log(err);
       });
   };
-
-  function ratingCompleted(rating) {
-    console.log(rating);
-  }
   return (
     <View style={styles.box}>
       <BackNav
@@ -102,19 +135,24 @@ const Orders = props => {
           <Icon name="search" size={15} color={'silver'} />
         </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        style={styles.ordersBox}
-        onPress={() => props.navigation.navigate('OrderDetails')}>
-        <Text style={styles.date}>Order Date</Text>
-        <Text style={styles.type}>Order Type(DINE IN)</Text>
-        {
-          //Capital Letters .toUpperCase()
-        }
-        <Text style={styles.info}>Order Number</Text>
-        <Text style={styles.info}>AED </Text>
-        <Text style={styles.info}>Txn ID: </Text>
-        <Text style={styles.info}>Branch Name</Text>
-        {/* <Rating
+      {orders
+        ? orders.map(order => (
+            <TouchableOpacity
+              key={order.id}
+              style={styles.ordersBox}
+              onPress={() => getPayments(order)}>
+              <Text style={styles.date}>
+                Date: {order.time.substring(0, 10)}
+              </Text>
+              <Text style={styles.type}>{order.type.toUpperCase()}</Text>
+              {
+                //Capital Letters .toUpperCase()
+              }
+              <Text style={styles.info}>Order Number: {order.orderNumber}</Text>
+              {/* <Text style={styles.info}>AED </Text> */}
+              <Text style={styles.info}>Txn ID: {order.id}</Text>
+              <Text style={styles.info}>Branch: {order.branch.name}</Text>
+              {/* <Rating
           type="custom"
           startingValue={0}
           ratingCount={5}
@@ -124,14 +162,16 @@ const Orders = props => {
           onFinishRating={ratingCompleted}
           style={{alignSelf: 'flex-start'}}
         /> */}
-        <View style={{flexDirection: 'row'}}>
-          <Icon name="star" size={25} style={{marginRight: 2}} />
-          <Icon name="star" size={25} style={{marginRight: 2}} />
-          <Icon name="star" size={25} style={{marginRight: 2}} />
-          <Icon name="star" size={25} style={{marginRight: 2}} />
-          <Icon name="star" size={25} style={{marginRight: 2}} />
-        </View>
-      </TouchableOpacity>
+              <View style={{flexDirection: 'row'}}>
+                <Icon name="star" size={25} style={{marginRight: 2}} />
+                <Icon name="star" size={25} style={{marginRight: 2}} />
+                <Icon name="star" size={25} style={{marginRight: 2}} />
+                <Icon name="star" size={25} style={{marginRight: 2}} />
+                <Icon name="star" size={25} style={{marginRight: 2}} />
+              </View>
+            </TouchableOpacity>
+          ))
+        : null}
     </View>
   );
 };

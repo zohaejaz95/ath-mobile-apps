@@ -8,8 +8,9 @@ import detailStyles from '../styles/detailStyles';
 import {useFocusEffect} from '@react-navigation/native';
 
 const OrderDetails = props => {
-  const {order, payment, items} = props.route.params;
+  const {order, payment} = props.route.params;
   const [orderDate, setOrderDate] = useState(Date());
+  //const [payment, setPayment] = useState(props.route.params.payment);
   const [token, setToken] = useState('');
   const [branch, setBranch] = useState([]);
   const url =
@@ -18,11 +19,11 @@ const OrderDetails = props => {
   useFocusEffect(
     React.useCallback(() => {
       getData();
-      //console.log(order, payment, items);
       let d = new Date(order.time);
       let fullDate = d.getDate() + '/' + d.getMonth() + '/' + d.getFullYear();
       setOrderDate(fullDate);
-      getBranchDetails();
+      order.branch = order.branch._id;
+      getBranchDetails(order.branch);
       console.log('Focused');
       return () => {
         console.log('Unfocused');
@@ -47,9 +48,9 @@ const OrderDetails = props => {
     }
   };
 
-  const getBranchDetails = () => {
+  const getBranchDetails = branch => {
     //console.log(token);
-    fetch(`${url}/get/branches/${order.branch}`, {
+    fetch(`${url}/get/branches/${branch}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -74,7 +75,6 @@ const OrderDetails = props => {
               },
             ]);
           } else {
-            console.log(jsonResp);
             setBranch(jsonResp);
           }
         } catch (err) {

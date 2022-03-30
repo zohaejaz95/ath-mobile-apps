@@ -89,9 +89,19 @@ const Rewards = props => {
       source={{
         uri: 'https://images.pexels.com/photos/10803604/pexels-photo-10803604.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
       }}>
-      <View style={styles.navToggle}>
-        <Icon size={25} style={styles.imageBars} name="bars" />
+      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <TouchableOpacity
+          style={styles.navToggle}
+          onPress={() => navigation.navigate('More')}>
+          <Icon size={25} style={styles.imageBars} name="bars" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navCross}
+          onPress={() => navigation.pop()}>
+          <Icon size={25} style={styles.imageBars} name="times" />
+        </TouchableOpacity>
       </View>
+
       <View style={{flex: 1}} />
       <View style={styles.giftOp}>
         <View style={styles.giftBox}>
@@ -151,6 +161,12 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  navCross: {
+    width: 50,
+    height: 50,
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
   imageBars: {

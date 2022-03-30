@@ -65,12 +65,14 @@ export default function Header(props) {
       );
     } else {
       return (
-        <View style={headerStyles.navToggle}>
+        <TouchableOpacity
+          style={headerStyles.navToggle}
+          onPress={() => navigation.navigate('More')}>
           <Image
             source={require('../asset/hamburger.png')}
             style={{width: 25, height: 20}}
           />
-        </View>
+        </TouchableOpacity>
       );
     }
   }
